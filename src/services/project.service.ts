@@ -1,4 +1,5 @@
 import {
+	addUserToProject,
 	createProject,
 	getProjectById,
 	getUserProjects,
@@ -36,6 +37,12 @@ export class ProjectService {
 
 	static async updateProject(payload: UpdateProject) {
 		const candidate = await updateProject(payload);
+
+		return candidate;
+	}
+
+	static async addTeamMember(userId: string, projectId: string) {
+		const candidate = await addUserToProject(userId, projectId);
 
 		return candidate;
 	}

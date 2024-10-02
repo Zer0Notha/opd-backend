@@ -27,3 +27,13 @@ export const getUserProjects = async (id: string) =>
 			projects: true,
 		},
 	});
+
+export const getUserRequests = async (id: string) =>
+	prisma.user.findUnique({
+		where: {
+			id,
+		},
+		select: {
+			reports: true,
+		},
+	});

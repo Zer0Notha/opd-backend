@@ -26,7 +26,7 @@ model User {
   role               Role             @default(student)
   profileGrades      String[]
   allowWatchMyGrades Boolean          @default(false)
-  projects           Project[]        @relation(name: "TeamOfProject")
+  projects           UserProjects[]   
   mentoring          Project[]        @relation(name: "MentorsOfProject")
   managing           Project[]        @relation(name: "ManagerOfProject")
   reports            ProjectReports[] @relation(name: "ReportAuthor")
@@ -34,6 +34,7 @@ model User {
 
   token              Token?
 }
+
 
 model Project {
   id           String           @id @default(uuid()) @db.Uuid
@@ -49,8 +50,16 @@ model Project {
   manager      User             @relation(name: "ManagerOfProject", fields: [managerId], references: [id])
   mentors      User[]           @relation(name: "MentorsOfProject")
   reports      ProjectReports[]
-  team         User[]           @relation(name: "TeamOfProject")
+  team         UserProjects[]   
   requests     ProjectRequest[]
+}
+
+model UserProjects {
+  id           String           @id @default(uuid()) @db.Uuid
+  userId       String           @db.Uuid
+  user         User             @relation(fields: [userId], references: [id])
+  projectId    String           @db.Uuid
+  project      Project          @relation(fields: [projectId], references: [id])
 }
 
 model ProjectReports {

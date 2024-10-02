@@ -18,3 +18,11 @@ export const updateProject = async (data: UpdateProject) =>
 		},
 		data: data,
 	});
+
+export const addUserToProject = async (userId: string, projectId: string) =>
+	prisma.userProjects.create({
+		data: {
+			userId,
+			projectId,
+		},
+	});
