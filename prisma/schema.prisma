@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String           @id @default(uuid()) @db.Uuid
+  email              String           @unique
+  vk                 String           @unique
+  password           String
+  groupId            String           @db.Uuid
+  group              Group            @relation(fields: [groupId], references: [id])
+  role               Role
+  profileGrades      String[]
+  allowWatchMyGrades Boolean          @default(false)
+  projects           Project[]        @relation(name: "TeamOfProject")
+  mentoring          Project[]        @relation(name: "MentorsOfProject")
+  managing           Project[]        @relation(name: "ManagerOfProject")
+  reports            ProjectReports[] @relation(name: "ReportAuthor")
+  requests           ProjectRequest[]
+}
+
+model Project {
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String
+  description  String
+  poster       String
+  type         ProjectType
+  maxUserNum   Int
+  problem      String
+  wayOfSolving String
+  status       ProjectStatus
+  managerId    String        @db.Uuid
+  manager      User          @relation(name: "ManagerOfProject", fields: [managerId], references: [id])
+  mentors      User[]        @relation(name: "MentorsOfProject")
+  reports      ProjectReports[]
+  team         User[]        @relation(name: "TeamOfProject")
+  requests     ProjectRequest[]
+}
+
+model ProjectReports {
+  id            String   @id @default(uuid()) @db.Uuid
+  date          DateTime
+  author        User     @relation(name: "ReportAuthor", fields: [authorId], references: [id])
+  authorId      String   @db.Uuid
+  attachedFile  String
+  text          String
+  projectId     String   @db.Uuid
+  project       Project  @relation(fields: [projectId], references: [id])
+}
+
+model ProjectRequest {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @db.Uuid
+  user          User      @relation(fields: [userId], references: [id])
+  projectId     String    @db.Uuid
+  project       Project   @relation(fields: [projectId], references: [id])
+  priority      Int      
+  status        ProjectRequestStatus
+}
+
+model Group {
+  id            String    @id @default(uuid()) @db.Uuid
+  enteringYear  String
+  foreign       Boolean   @default(false)
+  type          GroupType
+  users         User[]
+}
+
+enum Role {
+  student
+  teacher
+  admin
+  mentor
+}
+
+enum ProjectType {
+  scientific
+  technical
+  service
+}
+
+enum ProjectStatus {
+  not_confirmed
+  opened
+  closed
+  rejected
+}
+
+enum ProjectRequestStatus {
+  confirmed
+  rejected
+  working
+}
+
+enum GroupType {
+  bachelor
+  master
+  specialist
+  phd
+}

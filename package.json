@@ -1,0 +1,31 @@
+{
+  "name": "opd-backend",
+  "version": "0.0.1",
+  "description": "OPD Nodejs app",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigarachi/opd-backend.git"
+  },
+  "author": "Maksim Dmitriev <sigarachi@yandex.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sigarachi/opd-backend/issues"
+  },
+  "homepage": "https://github.com/sigarachi/opd-backend#readme",
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7",
+    "prisma": "^5.20.0"
+  }
+}
