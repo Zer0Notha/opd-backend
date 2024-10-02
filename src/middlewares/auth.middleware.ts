@@ -1,25 +1,57 @@
 import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import ApiStatus from '../handlers/api.handler';
+import TokenService from '../services/token.sevice';
 
-export function authMiddleware(
+export async function authMiddleware(
 	req: Request,
 	res: Response,
 	next: NextFunction
 ) {
 	try {
-		//@ts-ignore
-		if (req.cookies['token']) {
-			const verified = jwt.verify(
-				req.cookies['token'],
-				process.env.SECRET || ''
+		const cookie = req.cookies['token'];
+
+		if (cookie) {
+			const accessVerified = TokenService.validateAccessToken(
+				cookie.accessToken
 			);
-			if (!verified) next(ApiStatus.UnauthorizedError());
+			if (!accessVerified) {
+				if (cookie.refreshToken) {
+					const userData = TokenService.validateRefreshToken(cookie);
+
+					if (userData) {
+						//@ts-ignore
+						delete userData.iat;
+						//@ts-ignore
+						delete userData.exp;
+
+						const token = TokenService.generateToken({
+							...userData,
+						});
+
+						await TokenService.saveToken(userData.id, token.refreshToken);
+
+						res.cookie('token', token, { maxAge: 6000000, httpOnly: true });
+						//@ts-ignore
+						req.user = userData;
+
+						return next();
+					}
+				}
+
+				return next(ApiStatus.UnauthorizedError());
+			}
+
+			if (accessVerified) {
+				//@ts-ignore
+				req.user = accessVerified;
+			}
+
 			return next();
 		}
 
 		next(ApiStatus.UnauthorizedError());
 	} catch (e) {
+		console.log(e);
 		return next(ApiStatus.UnauthorizedError());
 	}
 }

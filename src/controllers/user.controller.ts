@@ -2,20 +2,22 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import ApiStatus from '../handlers/api.handler';
 import UserService from '../services/user.service';
+import { GenerateTokenProps } from '../types';
 
 export class UserController {
 	static async getMyInfo(req: Request, res: Response) {
 		try {
-			const userId = jwt.verify(req.cookies['token'], process.env.SECRET || '');
+			//@ts-ignore
+			const user = req.user as GenerateTokenProps;
 
-			if (!userId) {
+			if (!user.id) {
 				throw ApiStatus.badRequest('User not found');
 			}
 
-			const user = await UserService.getUserInfo(userId as string);
+			const userInfo = await UserService.getUserInfo(user.id as string);
 
 			return res.status(200).json({
-				user,
+				userInfo,
 			});
 		} catch (e) {
 			return res.status(500).json({

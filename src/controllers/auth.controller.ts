@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import AuthService from '../services/auth.service';
 import { CreateUserDto, LoginDto } from '../types';
-import jwt from 'jsonwebtoken';
+import TokenService from '../services/token.sevice';
 
 class AuthController {
 	static async register(
@@ -17,8 +17,9 @@ class AuthController {
 
 			const user = await AuthService.createUser(payload);
 
-			const cookie = jwt.sign(user.id, process.env.SECRET || '');
-			res.cookie('token', cookie, { maxAge: 60000, httpOnly: true });
+			const cookie = TokenService.generateToken(user);
+			await TokenService.saveToken(user.id, cookie.refreshToken);
+			res.cookie('token', cookie, { maxAge: 6000000, httpOnly: true });
 			return res.status(200).json({
 				user,
 			});
@@ -37,8 +38,9 @@ class AuthController {
 
 			const user = await AuthService.login(payload);
 
-			const cookie = jwt.sign(user.id, process.env.SECRET || '');
-			res.cookie('token', cookie, { maxAge: 60000, httpOnly: true });
+			const cookie = TokenService.generateToken(user);
+			await TokenService.saveToken(user.id, cookie.refreshToken);
+			res.cookie('token', cookie, { maxAge: 6000000, httpOnly: true });
 			return res.status(200).json({ user });
 		} catch (e) {
 			return res.status(500).json({

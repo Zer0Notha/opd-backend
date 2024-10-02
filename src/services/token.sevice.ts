@@ -1,19 +1,16 @@
 import { User } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 import prisma from '../config/db.config';
+import { GenerateTokenProps } from '../types';
 
 class TokenService {
-	static generateToken(payload: Omit<User, 'password' | 'groupId' | 'group'>) {
-		const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET || '', {
-			expiresIn: '30m',
+	static generateToken(payload: GenerateTokenProps) {
+		const accessToken = jwt.sign(payload, process.env.SECRET || '', {
+			expiresIn: '10s',
 		});
-		const refreshToken = jwt.sign(
-			payload,
-			process.env.JWT_REFRESH_SECRET || '',
-			{
-				expiresIn: '30d',
-			}
-		);
+		const refreshToken = jwt.sign(payload, process.env.SECRET || '', {
+			expiresIn: '30d',
+		});
 
 		return {
 			accessToken,
@@ -21,9 +18,12 @@ class TokenService {
 		};
 	}
 
-	static validateAccessToken(token: string) {
+	static validateAccessToken(token: string): GenerateTokenProps | null {
 		try {
-			const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET || '');
+			const userData = jwt.verify(
+				token,
+				process.env.SECRET || ''
+			) as GenerateTokenProps;
 			return userData;
 		} catch (e) {
 			return null;
@@ -32,19 +32,21 @@ class TokenService {
 
 	static idByAccessToken(token: string) {
 		try {
-			const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET || '');
+			const userData = jwt.verify(token, process.env.SECRET || '');
 			return (userData as User).id;
 		} catch (e) {
 			return null;
 		}
 	}
 
-	static validateRefreshToken(token: { refreshToken: string }) {
+	static validateRefreshToken(token: {
+		refreshToken: string;
+	}): GenerateTokenProps | null {
 		try {
 			const userData = jwt.verify(
 				token.refreshToken,
-				process.env.JWT_REFRESH_SECRET || ''
-			);
+				process.env.SECRET || ''
+			) as GenerateTokenProps;
 			return userData;
 		} catch (e) {
 			return null;
@@ -52,7 +54,7 @@ class TokenService {
 	}
 
 	static async saveToken(id: string, refreshToken: string) {
-		const tokenData = await prisma.token.findFirstOrThrow({
+		const tokenData = await prisma.token.findFirst({
 			where: { userId: id },
 		});
 		if (tokenData) {

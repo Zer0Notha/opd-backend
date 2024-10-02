@@ -16,6 +16,10 @@ class ApiStatus extends Error {
 		return new ApiStatus(401, 'Пользователь не авторизован');
 	}
 
+	static ShouldRefresh() {
+		return new ApiStatus(401, 'Should refresh');
+	}
+
 	static forbidden(message: string) {
 		return new ApiStatus(403, message);
 	}
