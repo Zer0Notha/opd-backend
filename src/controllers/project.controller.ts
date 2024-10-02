@@ -39,7 +39,7 @@ export class ProjectController {
 	}
 
 	static async createProject(
-		req: Request<never, never, Omit<CreateProject, 'status'>>,
+		req: Request<never, never, Omit<CreateProject, 'status' | 'managerId'>>,
 		res: Response
 	) {
 		try {
@@ -56,6 +56,7 @@ export class ProjectController {
 			const project = await ProjectService.createProject({
 				...projectDto,
 				status,
+				managerId: user.id,
 			});
 
 			return res.status(200).json({
