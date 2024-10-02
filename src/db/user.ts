@@ -17,3 +17,13 @@ export const createUser = async (data: CreateUserDto) =>
 	prisma.user.create({
 		data,
 	});
+
+export const getUserProjects = async (id: string) =>
+	prisma.user.findUnique({
+		where: {
+			id: id,
+		},
+		select: {
+			projects: true,
+		},
+	});
