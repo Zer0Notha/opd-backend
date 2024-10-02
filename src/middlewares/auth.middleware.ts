@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import ApiStatus from '../handlers/api.handler';
-import TokenService from '../services/token.sevice';
 
 export function authMiddleware(
 	req: Request,
@@ -9,7 +8,7 @@ export function authMiddleware(
 ) {
 	try {
 		//@ts-ignore
-		if (req.session?.session) {
+		if (req.cookies['session']) {
 			return next();
 		}
 

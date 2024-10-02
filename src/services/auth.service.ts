@@ -6,7 +6,6 @@ import { CreateUserDto, LoginDto } from '../types';
 class AuthService {
 	static async createUser(user: CreateUserDto) {
 		const candidate = await getUserByEmail(user.email);
-		console.log(1);
 
 		if (candidate) throw new Error('User already exists');
 

@@ -9,7 +9,6 @@ class AuthController {
 		res: Response
 	) {
 		try {
-			console.log(1);
 			const payload = req.body;
 
 			if (!payload) {
