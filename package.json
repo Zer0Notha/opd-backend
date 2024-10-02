@@ -1,31 +1,43 @@
 {
-  "name": "opd-backend",
-  "version": "0.0.1",
-  "description": "OPD Nodejs app",
-  "type": "module",
-  "main": "index.js",
-  "scripts": {
-    "dev": "nodemon app.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sigarachi/opd-backend.git"
-  },
-  "author": "Maksim Dmitriev <sigarachi@yandex.ru>",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/sigarachi/opd-backend/issues"
-  },
-  "homepage": "https://github.com/sigarachi/opd-backend#readme",
-  "dependencies": {
-    "@prisma/client": "^5.20.0",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.7",
-    "prisma": "^5.20.0"
-  }
+	"name": "opd-backend",
+	"version": "0.0.1",
+	"description": "OPD Nodejs app",
+	"main": "index.ts",
+	"scripts": {
+		"dev": "nodemon src/index.ts"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/sigarachi/opd-backend.git"
+	},
+	"author": "Maksim Dmitriev <sigarachi@yandex.ru>",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/sigarachi/opd-backend/issues"
+	},
+	"homepage": "https://github.com/sigarachi/opd-backend#readme",
+	"dependencies": {
+		"@prisma/client": "^5.20.0",
+		"@types/express-session": "^1.18.0",
+		"@types/jsonwebtoken": "^9.0.7",
+		"bcrypt": "^5.1.1",
+		"body-parser": "^1.20.3",
+		"cookie-parser": "^1.4.6",
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.5",
+		"express": "^4.19.2",
+		"express-session": "^1.18.0",
+		"jsonwebtoken": "^9.0.2",
+		"ts-node": "^10.9.2"
+	},
+	"devDependencies": {
+		"@types/bcrypt": "^5.0.2",
+		"@types/cookie-parser": "^1.4.7",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^4.17.21",
+		"@types/node": "^22.4.0",
+		"nodemon": "^3.1.4",
+		"prisma": "^5.18.0",
+		"typescript": "^5.5.4"
+	}
 }
