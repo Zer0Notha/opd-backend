@@ -1,6 +1,11 @@
-import { createProject, getProjectById, getUserProjects } from '../db';
+import {
+	createProject,
+	getProjectById,
+	getUserProjects,
+	updateProject,
+} from '../db';
 import ApiStatus from '../handlers/api.handler';
-import { CreateProject } from '../types';
+import { CreateProject, UpdateProject } from '../types';
 
 export class ProjectService {
 	static async getUserProjects(id: string) {
@@ -25,6 +30,12 @@ export class ProjectService {
 
 	static async createProject(payload: CreateProject) {
 		const candidate = await createProject(payload);
+
+		return candidate;
+	}
+
+	static async updateProject(payload: UpdateProject) {
+		const candidate = await updateProject(payload);
 
 		return candidate;
 	}

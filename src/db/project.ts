@@ -1,5 +1,5 @@
 import prisma from '../config/db.config';
-import { CreateProject } from '../types/project';
+import { CreateProject, UpdateProject } from '../types/project';
 
 export const getProjectById = async (id: string) =>
 	prisma.project.findFirstOrThrow({ where: { id: id } });
@@ -9,4 +9,12 @@ export const createProject = async (data: CreateProject) =>
 		data: {
 			...data,
 		},
+	});
+
+export const updateProject = async (data: UpdateProject) =>
+	prisma.project.update({
+		where: {
+			id: data.id,
+		},
+		data: data,
 	});

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import ApiStatus from '../handlers/api.handler';
 import { ProjectService } from '../services/project.service';
-import { CreateProject, GenerateTokenProps } from '../types';
+import { CreateProject, GenerateTokenProps, UpdateProject } from '../types';
 
 export class ProjectController {
 	static async getUserProjects(req: Request, res: Response) {
@@ -57,6 +57,38 @@ export class ProjectController {
 				...projectDto,
 				status,
 				managerId: user.id,
+			});
+
+			return res.status(200).json({
+				project,
+			});
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
+
+	static async updateProject(
+		req: Request<never, never, Omit<UpdateProject, 'id' | 'status'>>,
+		res: Response
+	) {
+		try {
+			//@ts-ignore
+			const user = req.user as GenerateTokenProps;
+			const projectDto = req.body;
+
+			const { id } = req.params;
+			if (!id) throw ApiStatus.badRequest('Project not found');
+
+			if (user.id !== projectDto.managerId) {
+				throw ApiStatus.forbidden('Forbidden');
+			}
+
+			const project = await ProjectService.updateProject({
+				...projectDto,
+				status: 'not_confirmed',
+				id,
 			});
 
 			return res.status(200).json({

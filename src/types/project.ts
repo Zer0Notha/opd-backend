@@ -11,3 +11,5 @@ export interface CreateProject {
 	status: ProjectStatus;
 	managerId: string;
 }
+
+export type UpdateProject = { id: string } & Partial<CreateProject>;
