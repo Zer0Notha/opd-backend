@@ -17,8 +17,8 @@ class AuthController {
 
 			const user = await AuthService.createUser(payload);
 
-			// @ts-ignore
-			req.session.session = jwt.sign(user, process.env.SECRET || '');
+			const cookie = jwt.sign(user.id, process.env.SECRET || '');
+			res.cookie('token', cookie, { maxAge: 60000, httpOnly: true });
 			return res.status(200).json({
 				user,
 			});
@@ -37,8 +37,8 @@ class AuthController {
 
 			const user = await AuthService.login(payload);
 
-			// @ts-ignore
-			req.session.session = jwt.sign(user, process.env.SECRET || '');
+			const cookie = jwt.sign(user.id, process.env.SECRET || '');
+			res.cookie('token', cookie, { maxAge: 60000, httpOnly: true });
 			return res.status(200).json({ user });
 		} catch (e) {
 			return res.status(500).json({
