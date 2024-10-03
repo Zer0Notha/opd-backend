@@ -5,6 +5,7 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import router from './routes';
 import bodyParser from 'body-parser';
+import fileUpload from 'express-fileupload';
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ app.use(
 		origin: 'http://localhost:5173',
 	})
 );
+app.use(fileUpload({ createParentPath: true }));
 app.use(
 	session({
 		name: 'session',

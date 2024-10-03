@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import ApiStatus from '../handlers/api.handler';
 import { ProjectService } from '../services/project.service';
 import { CreateProject, GenerateTokenProps, UpdateProject } from '../types';
+import { UploadedFile } from 'express-fileupload';
+import { v4 as uuidv4, v4 } from 'uuid';
 
 export class ProjectController {
 	static async getUserProjects(req: Request, res: Response) {
@@ -25,7 +27,7 @@ export class ProjectController {
 			const projects = await ProjectService.getProjects();
 
 			return res.status(200).json({
-				...projects,
+				projects,
 			});
 		} catch (e) {
 			return res.status(500).json({
@@ -60,15 +62,34 @@ export class ProjectController {
 			const user = req.user as GenerateTokenProps;
 			const projectDto = req.body;
 
-			if (user.role !== 'mentor' && user.role !== 'teacher') {
+			const allowedRoles = ['mentor', 'teacher'];
+
+			if (!allowedRoles.includes(user.role)) {
 				throw ApiStatus.forbidden('Forbidden');
 			}
+
+			if (!req.files) {
+				throw ApiStatus.badRequest('No poster file provided');
+			}
+
+			const file = req.files.file as UploadedFile;
+
+			const fileName =
+				v4({}) + '.' + file.name.split('.')[file.name.split('.').length - 1];
+
+			const path = __dirname + '../../../files/' + fileName;
+
+			file.mv(path, (err) => {
+				if (err) throw ApiStatus.badRequest('Error on file upload');
+			});
 
 			const status = user.role === 'teacher' ? 'opened' : 'not_confirmed';
 
 			const project = await ProjectService.createProject({
 				...projectDto,
 				status,
+				poster: file.name,
+				maxUserNum: Number(projectDto.maxUserNum),
 				managerId: user.id,
 			});
 

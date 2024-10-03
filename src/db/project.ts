@@ -11,12 +11,7 @@ export const createProject = async (data: CreateProject) =>
 		},
 	});
 
-export const getProjects = async () =>
-	prisma.project.findMany({
-		select: {
-			manager: true,
-		},
-	});
+export const getProjects = async () => prisma.project.findMany({});
 
 export const updateProject = async (data: UpdateProject) =>
 	prisma.project.update({
