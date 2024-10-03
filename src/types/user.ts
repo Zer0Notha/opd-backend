@@ -12,3 +12,5 @@ export interface LoginDto {
 	email: string;
 	password: string;
 }
+
+export interface UpdateUserDto extends CreateUserDto {}

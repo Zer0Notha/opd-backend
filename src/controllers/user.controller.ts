@@ -16,7 +16,7 @@ export class UserController {
 			const userInfo = await UserService.getUserInfo(user.id as string);
 
 			return res.status(200).json({
-				userInfo,
+				...userInfo,
 			});
 		} catch (e) {
 			return res.status(500).json({
@@ -33,7 +33,7 @@ export class UserController {
 			const userInfo = await UserService.getUserInfo(id);
 
 			return res.status(200).json({
-				userInfo,
+				...userInfo,
 			});
 		} catch (e) {
 			return res.status(500).json({

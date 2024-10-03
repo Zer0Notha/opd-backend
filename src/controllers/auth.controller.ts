@@ -21,7 +21,7 @@ class AuthController {
 			await TokenService.saveToken(user.id, cookie.refreshToken);
 			res.cookie('token', cookie, { maxAge: 6000000, httpOnly: true });
 			return res.status(200).json({
-				user,
+				...user,
 			});
 		} catch (e) {
 			return res.status(500).json({
@@ -41,7 +41,7 @@ class AuthController {
 			const cookie = TokenService.generateToken(user);
 			await TokenService.saveToken(user.id, cookie.refreshToken);
 			res.cookie('token', cookie, { maxAge: 6000000, httpOnly: true });
-			return res.status(200).json({ user });
+			return res.status(200).json({ ...user });
 		} catch (e) {
 			return res.status(500).json({
 				message: (e as Error).message,
