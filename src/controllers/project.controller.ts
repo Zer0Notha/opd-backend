@@ -20,6 +20,19 @@ export class ProjectController {
 			});
 		}
 	}
+	static async getProjects(req: Request, res: Response) {
+		try {
+			const projects = await ProjectService.getProjects();
+
+			return res.status(200).json({
+				...projects,
+			});
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
 
 	static async getProject(req: Request, res: Response) {
 		try {

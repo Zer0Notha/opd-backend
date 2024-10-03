@@ -2,6 +2,7 @@ import {
 	addUserToProject,
 	createProject,
 	getProjectById,
+	getProjects,
 	getUserProjects,
 	updateProject,
 } from '../db';
@@ -11,6 +12,16 @@ import { CreateProject, UpdateProject } from '../types';
 export class ProjectService {
 	static async getUserProjects(id: string) {
 		const candidate = await getUserProjects(id);
+
+		if (!candidate) {
+			throw ApiStatus.badRequest('Projects not found');
+		}
+
+		return candidate;
+	}
+
+	static async getProjects() {
+		const candidate = await getProjects();
 
 		if (!candidate) {
 			throw ApiStatus.badRequest('Projects not found');

@@ -4,6 +4,6 @@ import { GroupController } from '../controllers/group.controller';
 
 const router = Router();
 
-router.get('/list', authMiddleware, GroupController.getGroups);
+router.get('/list', GroupController.getGroups);
 
 export default router;
