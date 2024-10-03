@@ -4,6 +4,7 @@ import { ProjectService } from '../services/project.service';
 import { CreateProject, GenerateTokenProps, UpdateProject } from '../types';
 import { UploadedFile } from 'express-fileupload';
 import { v4 as uuidv4, v4 } from 'uuid';
+import path from 'path';
 
 export class ProjectController {
 	static async getUserProjects(req: Request, res: Response) {
@@ -44,8 +45,25 @@ export class ProjectController {
 			const project = await ProjectService.getProject(id);
 
 			return res.status(200).json({
-				project,
+				...project,
 			});
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
+
+	static async getProjectPoster(req: Request, res: Response) {
+		try {
+			const { id } = req.params;
+			if (!id) throw ApiStatus.badRequest('Project not found');
+
+			const project = await ProjectService.getProject(id);
+
+			return res
+				.status(200)
+				.sendFile(path.join(__dirname, '../../files/' + project.poster));
 		} catch (e) {
 			return res.status(500).json({
 				message: (e as Error).message,
@@ -88,7 +106,7 @@ export class ProjectController {
 			const project = await ProjectService.createProject({
 				...projectDto,
 				status,
-				poster: file.name,
+				poster: fileName,
 				maxUserNum: Number(projectDto.maxUserNum),
 				managerId: user.id,
 			});
