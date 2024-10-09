@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { RequestSerice } from '../services/request.service';
 import { CreateProjectRequest, GenerateTokenProps } from '../types';
-import { ProjectRequestStatus } from '@prisma/client';
-import UserService from '../services/user.service';
 import { ProjectService } from '../services/project.service';
 import ApiStatus from '../handlers/api.handler';
 
@@ -16,6 +14,35 @@ export class RequestController {
 
 			return res.status(200).json({
 				...requests,
+			});
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
+
+	static async getProjectRequests(req: Request, res: Response) {
+		try {
+			//@ts-ignore
+			const user = req.user as GenerateTokenProps;
+
+			const { id } = req.params;
+
+			const project = await ProjectService.getProject(id);
+
+			if (!project) {
+				throw ApiStatus.pageNotFound('Project not found');
+			}
+
+			if (project.managerId !== user.id) {
+				throw ApiStatus.forbidden('Forbidden');
+			}
+
+			const requests = await RequestSerice.getProjectRequests(id);
+
+			return res.status(200).json({
+				requests,
 			});
 		} catch (e) {
 			return res.status(500).json({
@@ -55,11 +82,10 @@ export class RequestController {
 			const user = req.user as GenerateTokenProps;
 
 			const { projectId } = req.params;
-			const { priority } = req.body;
 
 			const requests = await RequestSerice.createRequest({
 				userId: user.id,
-				priority,
+				priority: 1,
 				projectId: projectId,
 			});
 

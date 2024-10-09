@@ -71,6 +71,21 @@ export class ProjectController {
 		}
 	}
 
+	static async getProjectUsers(req: Request, res: Response) {
+		try {
+			const { id } = req.params;
+			if (!id) throw ApiStatus.badRequest('Project not found');
+
+			const users = await ProjectService.getProjectUsers(id);
+
+			return res.status(200).json({ users });
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
+
 	static async createProject(
 		req: Request<never, never, Omit<CreateProject, 'status' | 'managerId'>>,
 		res: Response
@@ -110,6 +125,8 @@ export class ProjectController {
 				maxUserNum: Number(projectDto.maxUserNum),
 				managerId: user.id,
 			});
+
+			await ProjectService.addTeamMember(user.id, project.id);
 
 			return res.status(200).json({
 				project,

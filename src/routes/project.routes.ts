@@ -12,6 +12,7 @@ router.get(
 	authMiddleware,
 	ProjectController.getProjectPoster
 );
+router.get('/get-users/:id', authMiddleware, ProjectController.getProjectUsers);
 
 router.post('/create', authMiddleware, ProjectController.createProject);
 router.post('/update/:id', authMiddleware, ProjectController.updateProject);

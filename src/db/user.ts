@@ -34,6 +34,6 @@ export const getUserRequests = async (id: string) =>
 			id,
 		},
 		select: {
-			reports: true,
+			requests: true,
 		},
 	});

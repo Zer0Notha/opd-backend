@@ -3,6 +3,7 @@ import {
 	createProject,
 	getProjectById,
 	getProjects,
+	getProjectUsers,
 	getUserProjects,
 	updateProject,
 } from '../db';
@@ -56,5 +57,11 @@ export class ProjectService {
 		const candidate = await addUserToProject(userId, projectId);
 
 		return candidate;
+	}
+
+	static async getProjectUsers(projectId: string) {
+		const users = await getProjectUsers(projectId);
+
+		return users.map((item) => item.userId);
 	}
 }

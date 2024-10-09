@@ -48,6 +48,17 @@ class AuthController {
 			});
 		}
 	}
+
+	static async logout(req: Request, res: Response) {
+		try {
+			res.clearCookie('token');
+			return res.status(200);
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
 }
 
 export default AuthController;

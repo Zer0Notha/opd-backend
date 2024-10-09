@@ -4,6 +4,7 @@ import {
 	createRequest,
 	findRequest,
 	findUserRequest,
+	getProjectRequests,
 	updateRequestsPriority,
 	updateRequestStatus,
 } from '../db/request';
@@ -11,8 +12,14 @@ import ApiStatus from '../handlers/api.handler';
 import { CreateProjectRequest } from '../types';
 
 export class RequestSerice {
-	static async getUserRequests(id: string) {
-		const candidate = await getUserRequests(id);
+	static async getUserRequests(userId: string) {
+		const candidate = await getUserRequests(userId);
+
+		return candidate;
+	}
+
+	static async getProjectRequests(projectId: string) {
+		const candidate = await getProjectRequests(projectId);
 
 		return candidate;
 	}
@@ -32,7 +39,7 @@ export class RequestSerice {
 	static async createRequest(payload: CreateProjectRequest) {
 		const requests = await getUserRequests(payload.userId);
 
-		if (requests?.reports.length === 5)
+		if (requests?.requests.length === 5)
 			throw ApiStatus.badRequest('Request limit is 5');
 
 		const existing = await findUserRequest(payload.userId, payload.projectId);

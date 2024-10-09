@@ -28,3 +28,10 @@ export const addUserToProject = async (userId: string, projectId: string) =>
 			projectId,
 		},
 	});
+
+export const getProjectUsers = async (projectId: string) =>
+	prisma.userProjects.findMany({
+		where: {
+			projectId,
+		},
+	});
