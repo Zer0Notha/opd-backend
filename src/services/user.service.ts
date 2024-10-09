@@ -1,3 +1,4 @@
+import { group } from 'console';
 import { getUserById } from '../db';
 import ApiStatus from '../handlers/api.handler';
 
@@ -18,6 +19,7 @@ class UserService {
 			groupId: candidate.groupId,
 			vk: candidate.vk,
 			role: candidate.role,
+			group: candidate.group,
 		};
 	}
 }

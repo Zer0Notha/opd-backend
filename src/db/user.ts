@@ -6,6 +6,9 @@ export const getUserById = async (id: string) =>
 		where: {
 			id,
 		},
+		include: {
+			group: true,
+		},
 	});
 
 export const getUserByEmail = async (email: string) =>

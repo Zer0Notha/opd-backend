@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import AuthService from '../services/auth.service';
 import { CreateUserDto, LoginDto } from '../types';
 import TokenService from '../services/token.sevice';
@@ -52,7 +52,7 @@ class AuthController {
 	static async logout(req: Request, res: Response) {
 		try {
 			res.clearCookie('token');
-			return res.status(200);
+			return res.status(200).json('User Logged out');
 		} catch (e) {
 			return res.status(500).json({
 				message: (e as Error).message,
