@@ -13,8 +13,18 @@ router.get(
 	ProjectController.getProjectPoster
 );
 router.get('/get-users/:id', authMiddleware, ProjectController.getProjectUsers);
+router.get(
+	'/get-report-file/:id',
+	authMiddleware,
+	ProjectController.getReportFile
+);
 
 router.post('/create', authMiddleware, ProjectController.createProject);
+router.post(
+	'/create-report/:id',
+	authMiddleware,
+	ProjectController.createProjectReport
+);
 router.post('/update/:id', authMiddleware, ProjectController.updateProject);
 router.post('/approve/:id', authMiddleware, ProjectController.approveProject);
 router.post('/reject/:id', authMiddleware, ProjectController.rejectProject);

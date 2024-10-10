@@ -26,15 +26,14 @@ model User {
   role               Role             @default(student)
   profileGrades      String[]
   allowWatchMyGrades Boolean          @default(false)
-  projects           UserProjects[]   
+  projects           UserProjects[]
   mentoring          Project[]        @relation(name: "MentorsOfProject")
   managing           Project[]        @relation(name: "ManagerOfProject")
   reports            ProjectReports[] @relation(name: "ReportAuthor")
   requests           ProjectRequest[]
 
-  token              Token?
+  token Token?
 }
-
 
 model Project {
   id           String           @id @default(uuid()) @db.Uuid
@@ -50,27 +49,36 @@ model Project {
   manager      User             @relation(name: "ManagerOfProject", fields: [managerId], references: [id])
   mentors      User[]           @relation(name: "MentorsOfProject")
   reports      ProjectReports[]
-  team         UserProjects[]   
+  team         UserProjects[]
   requests     ProjectRequest[]
 }
 
 model UserProjects {
-  id           String           @id @default(uuid()) @db.Uuid
-  userId       String           @db.Uuid
-  user         User             @relation(fields: [userId], references: [id])
-  projectId    String           @db.Uuid
-  project      Project          @relation(fields: [projectId], references: [id])
+  id        String  @id @default(uuid()) @db.Uuid
+  userId    String  @db.Uuid
+  user      User    @relation(fields: [userId], references: [id])
+  projectId String  @db.Uuid
+  project   Project @relation(fields: [projectId], references: [id])
 }
 
 model ProjectReports {
-  id           String   @id @default(uuid()) @db.Uuid
-  date         DateTime
-  author       User     @relation(name: "ReportAuthor", fields: [authorId], references: [id])
-  authorId     String   @db.Uuid
-  attachedFile String
-  text         String
-  projectId    String   @db.Uuid
-  project      Project  @relation(fields: [projectId], references: [id])
+  id       String   @id @default(uuid()) @db.Uuid
+  date     DateTime
+  author   User     @relation(name: "ReportAuthor", fields: [authorId], references: [id])
+  authorId String   @db.Uuid
+
+  text       String
+  projectId  String      @db.Uuid
+  project    Project     @relation(fields: [projectId], references: [id])
+  reportFile ReportFile?
+}
+
+model ReportFile {
+  id String @id @default(uuid()) @db.Uuid
+  name     String         @unique
+  path     String         @unique
+  reportId String         @unique @db.Uuid
+  report   ProjectReports @relation(fields: [reportId], references: [id])
 }
 
 model ProjectRequest {
@@ -93,9 +101,9 @@ model Group {
 }
 
 model Token {
-  id     String @id @default(uuid()) @db.Uuid
-  userId String @unique @db.Uuid
-  user   User   @relation(fields: [userId], references: [id])
+  id           String @id @default(uuid()) @db.Uuid
+  userId       String @unique @db.Uuid
+  user         User   @relation(fields: [userId], references: [id])
   refreshToken String
 }
 

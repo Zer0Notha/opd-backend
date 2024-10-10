@@ -1,7 +1,12 @@
 import { Request, Response } from 'express';
 import ApiStatus from '../handlers/api.handler';
 import { ProjectService } from '../services/project.service';
-import { CreateProject, GenerateTokenProps, UpdateProject } from '../types';
+import {
+	CreateProject,
+	CreateProjectReport,
+	GenerateTokenProps,
+	UpdateProject,
+} from '../types';
 import { UploadedFile } from 'express-fileupload';
 import { v4 as uuidv4, v4 } from 'uuid';
 import path from 'path';
@@ -88,6 +93,21 @@ export class ProjectController {
 		}
 	}
 
+	static async getReportFile(req: Request, res: Response) {
+		try {
+			const { id } = req.params;
+			if (!id) throw ApiStatus.badRequest('Report not found');
+
+			const reportFile = await ProjectService.getReportFile(id);
+
+			return res.status(200).json({ reportFile });
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
+
 	static async getProjectUsers(req: Request, res: Response) {
 		try {
 			const { id } = req.params;
@@ -112,7 +132,7 @@ export class ProjectController {
 			const user = req.user as GenerateTokenProps;
 			const projectDto = req.body;
 
-			const allowedRoles = ['mentor', 'teacher', 'admin'];
+			const allowedRoles = ['mentor', 'teacher', 'admin', 'student'];
 
 			if (!allowedRoles.includes(user.role)) {
 				throw ApiStatus.forbidden('Forbidden');
@@ -133,7 +153,10 @@ export class ProjectController {
 				if (err) throw ApiStatus.badRequest('Error on file upload');
 			});
 
-			const status = user.role === 'teacher' ? 'opened' : 'not_confirmed';
+			const status =
+				user.role === 'teacher' || user.role === 'admin'
+					? 'opened'
+					: 'not_confirmed';
 
 			const project = await ProjectService.createProject({
 				...projectDto,
@@ -147,6 +170,64 @@ export class ProjectController {
 
 			return res.status(200).json({
 				project,
+			});
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
+
+	static async createProjectReport(
+		req: Request<
+			never,
+			never,
+			Omit<CreateProjectReport, 'projectId' | 'authorId' | 'attachedFile'>
+		>,
+		res: Response
+	) {
+		try {
+			//@ts-ignore
+			const user = req.user as GenerateTokenProps;
+			const { id } = req.params;
+
+			const reportDto = req.body;
+
+			const users = await ProjectService.getProjectUsers(id);
+
+			if (!users.includes(user.id)) {
+				throw ApiStatus.forbidden('Forbidden');
+			}
+
+			const file = req.files?.file as UploadedFile;
+			let fileName = '';
+			let path = '';
+
+			if (file) {
+				fileName =
+					v4({}) + '.' + file.name.split('.')[file.name.split('.').length - 1];
+
+				path = __dirname + '../../../files/' + fileName;
+
+				file.mv(path, (err) => {
+					if (err) throw ApiStatus.badRequest('Error on file upload');
+				});
+			}
+
+			const report = await ProjectService.createProjectReport({
+				...reportDto,
+				projectId: id,
+				authorId: user.id,
+			});
+
+			await ProjectService.createReportFile({
+				name: fileName,
+				path,
+				reportId: report.id,
+			});
+
+			return res.status(200).json({
+				report,
 			});
 		} catch (e) {
 			return res.status(500).json({

@@ -1,9 +1,17 @@
 import { ProjectStatus, ProjectType } from '@prisma/client';
 import prisma from '../config/db.config';
-import { CreateProject, UpdateProject } from '../types/project';
+import {
+	CreateProject,
+	CreateProjectReport,
+	CreateReportFile,
+	UpdateProject,
+} from '../types/project';
 
 export const getProjectById = async (id: string) =>
-	prisma.project.findFirstOrThrow({ where: { id: id } });
+	prisma.project.findFirstOrThrow({
+		where: { id: id },
+		include: { reports: true },
+	});
 
 export const createProject = async (data: CreateProject) =>
 	prisma.project.create({
@@ -11,6 +19,15 @@ export const createProject = async (data: CreateProject) =>
 			...data,
 		},
 	});
+
+export const createProjectReport = async (data: CreateProjectReport) =>
+	prisma.projectReports.create({ data });
+
+export const createReportFile = async (data: CreateReportFile) =>
+	prisma.reportFile.create({ data: data });
+
+export const getReportFile = async (reportId: string) =>
+	prisma.reportFile.findUnique({ where: { reportId } });
 
 export const getProjects = async (status?: ProjectStatus, type?: ProjectType) =>
 	prisma.project.findMany({

@@ -2,14 +2,22 @@ import { ProjectStatus, ProjectType } from '@prisma/client';
 import {
 	addUserToProject,
 	createProject,
+	createProjectReport,
+	createReportFile,
 	getProjectById,
 	getProjects,
 	getProjectUsers,
+	getReportFile,
 	getUserProjects,
 	updateProject,
 } from '../db';
 import ApiStatus from '../handlers/api.handler';
-import { CreateProject, UpdateProject } from '../types';
+import {
+	CreateProject,
+	CreateProjectReport,
+	CreateReportFile,
+	UpdateProject,
+} from '../types';
 
 export class ProjectService {
 	static async getUserProjects(id: string) {
@@ -47,6 +55,24 @@ export class ProjectService {
 
 	static async createProject(payload: CreateProject) {
 		const candidate = await createProject(payload);
+
+		return candidate;
+	}
+
+	static async createProjectReport(payload: CreateProjectReport) {
+		const candidate = await createProjectReport(payload);
+
+		return candidate;
+	}
+
+	static async getReportFile(payload: string) {
+		const candidate = await getReportFile(payload);
+
+		return candidate;
+	}
+
+	static async createReportFile(payload: CreateReportFile) {
+		const candidate = await createReportFile(payload);
 
 		return candidate;
 	}
