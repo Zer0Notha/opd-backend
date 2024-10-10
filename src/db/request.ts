@@ -2,9 +2,14 @@ import { ProjectRequestStatus } from '@prisma/client';
 import prisma from '../config/db.config';
 import { CreateProjectRequest } from '../types';
 
-export const updateRequestsPriority = async (
-	data: Array<{ id: string; priority: number }>
-) => prisma.projectRequest.updateMany({ data: data });
+export const updateRequestsPriority = async (data: {
+	id: string;
+	priority: number;
+}) =>
+	prisma.projectRequest.update({
+		where: { id: data.id },
+		data: { priority: data.priority },
+	});
 
 export const findUserRequest = async (userId: string, projectId: string) =>
 	prisma.projectRequest.findFirst({

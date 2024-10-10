@@ -51,14 +51,18 @@ export class RequestController {
 	}
 
 	static async updateRequestsPriority(
-		req: Request<never, never, Array<{ id: string; priority: number }>>,
+		req: Request<
+			never,
+			never,
+			{ forUpdate: Array<{ id: string; priority: number }> }
+		>,
 		res: Response
 	) {
 		try {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
 
-			const forUpdate = req.body;
+			const { forUpdate } = req.body;
 
 			const requests = await RequestSerice.setPriority(forUpdate);
 

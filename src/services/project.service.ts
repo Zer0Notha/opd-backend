@@ -1,3 +1,4 @@
+import { ProjectStatus, ProjectType } from '@prisma/client';
 import {
 	addUserToProject,
 	createProject,
@@ -21,8 +22,11 @@ export class ProjectService {
 		return [...candidate.map((item) => item.project)];
 	}
 
-	static async getProjects() {
-		const candidate = await getProjects();
+	static async getProjects(args: {
+		status?: ProjectStatus;
+		type?: ProjectType;
+	}) {
+		const candidate = await getProjects(args.status, args.type);
 
 		if (!candidate) {
 			throw ApiStatus.badRequest('Projects not found');

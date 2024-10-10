@@ -25,9 +25,18 @@ export class RequestSerice {
 	}
 
 	static async setPriority(requests: Array<{ id: string; priority: number }>) {
-		const candidate = await updateRequestsPriority(requests);
+		const candidates = await Promise.all([
+			...requests.map(
+				(item) =>
+					new Promise((resolve, reject) =>
+						updateRequestsPriority({ id: item.id, priority: item.priority })
+							.then(resolve)
+							.catch(reject)
+					)
+			),
+		]);
 
-		return candidate;
+		return candidates;
 	}
 
 	static async getRequest(id: string) {

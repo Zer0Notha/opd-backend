@@ -5,6 +5,7 @@ import { CreateProject, GenerateTokenProps, UpdateProject } from '../types';
 import { UploadedFile } from 'express-fileupload';
 import { v4 as uuidv4, v4 } from 'uuid';
 import path from 'path';
+import { ProjectStatus, ProjectType } from '@prisma/client';
 
 export class ProjectController {
 	static async getUserProjects(req: Request, res: Response) {
@@ -25,7 +26,23 @@ export class ProjectController {
 	}
 	static async getProjects(req: Request, res: Response) {
 		try {
-			const projects = await ProjectService.getProjects();
+			const { status, type } = req.query as {
+				status: ProjectStatus | 'null';
+				type: ProjectType | 'null';
+			};
+
+			let args: {
+				status?: ProjectStatus;
+				type?: ProjectType;
+			} = {};
+
+			if (status !== 'null') {
+				args.status = status;
+			}
+
+			if (type !== 'null') args.type = type;
+
+			const projects = await ProjectService.getProjects(args);
 
 			return res.status(200).json({
 				projects,

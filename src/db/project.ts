@@ -1,3 +1,4 @@
+import { ProjectStatus, ProjectType } from '@prisma/client';
 import prisma from '../config/db.config';
 import { CreateProject, UpdateProject } from '../types/project';
 
@@ -11,7 +12,13 @@ export const createProject = async (data: CreateProject) =>
 		},
 	});
 
-export const getProjects = async () => prisma.project.findMany({});
+export const getProjects = async (status?: ProjectStatus, type?: ProjectType) =>
+	prisma.project.findMany({
+		where: {
+			status: status,
+			type: type,
+		},
+	});
 
 export const updateProject = async (data: UpdateProject) =>
 	prisma.project.update({
