@@ -95,7 +95,7 @@ export class ProjectController {
 			const user = req.user as GenerateTokenProps;
 			const projectDto = req.body;
 
-			const allowedRoles = ['mentor', 'teacher'];
+			const allowedRoles = ['mentor', 'teacher', 'admin'];
 
 			if (!allowedRoles.includes(user.role)) {
 				throw ApiStatus.forbidden('Forbidden');
@@ -151,7 +151,7 @@ export class ProjectController {
 			if (!id) throw ApiStatus.badRequest('Project not found');
 
 			const candidate = await ProjectService.getProject(id);
-			const allowedRoles = ['mentor', 'teacher'];
+			const allowedRoles = ['mentor', 'teacher', 'admin'];
 
 			if (
 				user.id !== candidate.managerId ||
@@ -181,7 +181,7 @@ export class ProjectController {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
 
-			const allowedRoles = ['mentor', 'teacher'];
+			const allowedRoles = ['teacher', 'admin'];
 
 			if (!allowedRoles.includes(user.role)) {
 				throw ApiStatus.forbidden('Forbidden');
@@ -210,7 +210,7 @@ export class ProjectController {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
 
-			const allowedRoles = ['mentor', 'teacher'];
+			const allowedRoles = ['teacher', 'admin'];
 
 			if (!allowedRoles.includes(user.role)) {
 				throw ApiStatus.forbidden('Forbidden');

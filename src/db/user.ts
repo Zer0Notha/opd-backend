@@ -38,6 +38,9 @@ export const getUserRequests = async (id: string) =>
 		},
 		select: {
 			requests: {
+				orderBy: {
+					priority: 'asc',
+				},
 				select: {
 					id: true,
 					userId: true,

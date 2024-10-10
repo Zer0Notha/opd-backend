@@ -20,6 +20,7 @@ class UserService {
 			vk: candidate.vk,
 			role: candidate.role,
 			group: candidate.group,
+			allowWatchMyGrades: candidate.allowWatchMyGrades,
 		};
 	}
 }

@@ -82,9 +82,17 @@ export class RequestController {
 
 			const { projectId } = req.params;
 
+			const createdRequests = await RequestSerice.getUserRequests(user.id);
+
+			if (createdRequests?.requests && createdRequests.requests.length >= 5) {
+				throw ApiStatus.badRequest('Limit');
+			}
+
 			const requests = await RequestSerice.createRequest({
 				userId: user.id,
-				priority: 1,
+				priority:
+					(createdRequests?.requests && createdRequests?.requests.length + 1) ??
+					1,
 				projectId: projectId,
 			});
 
