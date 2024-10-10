@@ -7,10 +7,9 @@ import ApiStatus from '../handlers/api.handler';
 export class RequestController {
 	static async getUserRequests(req: Request, res: Response) {
 		try {
-			//@ts-ignore
-			const user = req.user as GenerateTokenProps;
+			const { id } = req.params;
 
-			const requests = await RequestSerice.getUserRequests(user.id);
+			const requests = await RequestSerice.getUserRequests(id);
 
 			return res.status(200).json({
 				...requests,
@@ -127,6 +126,17 @@ export class RequestController {
 			const request = await RequestSerice.getRequest(id);
 
 			if (!request) throw ApiStatus.badRequest('Request not found');
+
+			const project = await ProjectService.getProject(request.projectId);
+
+			if (!project) throw ApiStatus.badRequest('Project not found');
+
+			const totalTeammates = (
+				await ProjectService.getProjectUsers(request.projectId)
+			).length;
+
+			if (totalTeammates + 1 > project.maxUserNum)
+				throw ApiStatus.badRequest('Limit reached');
 
 			await ProjectService.addTeamMember(request.userId, request.projectId);
 

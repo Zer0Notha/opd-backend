@@ -22,12 +22,12 @@ export const createUser = async (data: CreateUserDto) =>
 	});
 
 export const getUserProjects = async (id: string) =>
-	prisma.user.findUnique({
+	prisma.userProjects.findMany({
 		where: {
-			id: id,
+			userId: id,
 		},
 		select: {
-			projects: true,
+			project: true,
 		},
 	});
 
@@ -37,6 +37,15 @@ export const getUserRequests = async (id: string) =>
 			id,
 		},
 		select: {
-			requests: true,
+			requests: {
+				select: {
+					id: true,
+					userId: true,
+					priority: true,
+					projectId: true,
+					status: true,
+					project: true,
+				},
+			},
 		},
 	});

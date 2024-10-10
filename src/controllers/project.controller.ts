@@ -15,7 +15,7 @@ export class ProjectController {
 			const projects = await ProjectService.getUserProjects(id);
 
 			return res.status(200).json({
-				...projects,
+				projects,
 			});
 		} catch (e) {
 			return res.status(500).json({
@@ -150,13 +150,77 @@ export class ProjectController {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
 
-			if (user.id !== projectDto.managerId) {
+			const candidate = await ProjectService.getProject(id);
+			const allowedRoles = ['mentor', 'teacher'];
+
+			if (
+				user.id !== candidate.managerId ||
+				!allowedRoles.includes(user.role)
+			) {
 				throw ApiStatus.forbidden('Forbidden');
 			}
 
 			const project = await ProjectService.updateProject({
 				...projectDto,
 				status: 'not_confirmed',
+				id,
+			});
+
+			return res.status(200).json({
+				project,
+			});
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
+
+	static async approveProject(req: Request, res: Response) {
+		try {
+			//@ts-ignore
+			const user = req.user as GenerateTokenProps;
+
+			const allowedRoles = ['mentor', 'teacher'];
+
+			if (!allowedRoles.includes(user.role)) {
+				throw ApiStatus.forbidden('Forbidden');
+			}
+
+			const { id } = req.params;
+			if (!id) throw ApiStatus.badRequest('Project not found');
+
+			const project = await ProjectService.updateProject({
+				status: 'opened',
+				id,
+			});
+
+			return res.status(200).json({
+				project,
+			});
+		} catch (e) {
+			return res.status(500).json({
+				message: (e as Error).message,
+			});
+		}
+	}
+
+	static async rejectProject(req: Request, res: Response) {
+		try {
+			//@ts-ignore
+			const user = req.user as GenerateTokenProps;
+
+			const allowedRoles = ['mentor', 'teacher'];
+
+			if (!allowedRoles.includes(user.role)) {
+				throw ApiStatus.forbidden('Forbidden');
+			}
+
+			const { id } = req.params;
+			if (!id) throw ApiStatus.badRequest('Project not found');
+
+			const project = await ProjectService.updateProject({
+				status: 'rejected',
 				id,
 			});
 

@@ -16,5 +16,7 @@ router.get('/get-users/:id', authMiddleware, ProjectController.getProjectUsers);
 
 router.post('/create', authMiddleware, ProjectController.createProject);
 router.post('/update/:id', authMiddleware, ProjectController.updateProject);
+router.post('/approve/:id', authMiddleware, ProjectController.approveProject);
+router.post('/reject/:id', authMiddleware, ProjectController.rejectProject);
 
 export default router;

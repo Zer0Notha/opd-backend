@@ -18,7 +18,7 @@ export class ProjectService {
 			throw ApiStatus.badRequest('Projects not found');
 		}
 
-		return candidate;
+		return [...candidate.map((item) => item.project)];
 	}
 
 	static async getProjects() {
