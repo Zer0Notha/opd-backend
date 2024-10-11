@@ -100,7 +100,7 @@ export class ProjectController {
 
 			const reportFile = await ProjectService.getReportFile(id);
 
-			return res.status(200).json({ reportFile });
+			return res.status(200).json({ ...reportFile });
 		} catch (e) {
 			return res.status(500).json({
 				message: (e as Error).message,

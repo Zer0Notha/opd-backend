@@ -4,7 +4,10 @@
 	"description": "OPD Nodejs app",
 	"main": "index.ts",
 	"scripts": {
-		"dev": "nodemon src/index.ts"
+		"dev": "nodemon src/index.ts",
+		"build": "tsc -p tsconfig.json",
+		"postinstall": "npx prisma generate",
+		"start": "npx ts-node src/index.ts"
 	},
 	"repository": {
 		"type": "git",
