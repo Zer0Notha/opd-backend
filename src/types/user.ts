@@ -5,7 +5,7 @@ export interface CreateUserDto {
 	groupId: string;
 	firstName: string;
 	secondName: string;
-	patronymic: string;
+	patronymic?: string;
 }
 
 export interface LoginDto {
