@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { RequestSerice } from '../services/request.service';
 import { CreateProjectRequest, GenerateTokenProps } from '../types';
 import { ProjectService } from '../services/project.service';
 import ApiStatus from '../handlers/api.handler';
 
 export class RequestController {
-	static async getUserRequests(req: Request, res: Response) {
+	static async getUserRequests(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
 
@@ -15,13 +15,11 @@ export class RequestController {
 				...requests,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
-	static async getProjectRequests(req: Request, res: Response) {
+	static async getProjectRequests(req: Request, res: Response, next: NextFunction) {
 		try {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
@@ -44,9 +42,7 @@ export class RequestController {
 				requests,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
@@ -56,7 +52,8 @@ export class RequestController {
 			never,
 			{ forUpdate: Array<{ id: string; priority: number }> }
 		>,
-		res: Response
+		res: Response,
+		next: NextFunction
 	) {
 		try {
 			//@ts-ignore
@@ -70,15 +67,14 @@ export class RequestController {
 				...requests,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
 	static async createRequest(
 		req: Request<never, never, Pick<CreateProjectRequest, 'priority'>>,
-		res: Response
+		res: Response, 
+		next: NextFunction
 	) {
 		try {
 			//@ts-ignore
@@ -104,13 +100,11 @@ export class RequestController {
 				...requests,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
-	static async cancelRequest(req: Request, res: Response) {
+	static async cancelRequest(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
 
@@ -120,13 +114,11 @@ export class RequestController {
 				...request,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
-	static async approveRequest(req: Request, res: Response) {
+	static async approveRequest(req: Request, res: Response, next: NextFunction) {
 		try {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
@@ -156,9 +148,7 @@ export class RequestController {
 				...request,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 }

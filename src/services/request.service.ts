@@ -49,12 +49,12 @@ export class RequestSerice {
 		const requests = await getUserRequests(payload.userId);
 
 		if (requests?.requests.length === 5)
-			throw ApiStatus.badRequest('Request limit is 5');
+			throw ApiStatus.badRequest('Максимальное количество заявок - 5');
 
 		const existing = await findUserRequest(payload.userId, payload.projectId);
 
 		if (existing && existing.status !== 'rejected')
-			throw ApiStatus.badRequest('Request already exists');
+			throw ApiStatus.badRequest('Заявка уже существует');
 
 		const candidate = await createRequest(payload);
 

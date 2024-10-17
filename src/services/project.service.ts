@@ -24,7 +24,7 @@ export class ProjectService {
 		const candidate = await getUserProjects(id);
 
 		if (!candidate) {
-			throw ApiStatus.badRequest('Projects not found');
+			throw ApiStatus.badRequest('Проект не найден');
 		}
 
 		return [...candidate.map((item) => item.project)];
@@ -37,7 +37,7 @@ export class ProjectService {
 		const candidate = await getProjects(args.status, args.type);
 
 		if (!candidate) {
-			throw ApiStatus.badRequest('Projects not found');
+			throw ApiStatus.badRequest('Проекты не найдены');
 		}
 
 		return candidate;
@@ -47,7 +47,7 @@ export class ProjectService {
 		const candidate = await getProjectById(id);
 
 		if (!candidate) {
-			throw ApiStatus.badRequest('Project not found');
+			throw ApiStatus.badRequest('Проект не найден');
 		}
 
 		return candidate;

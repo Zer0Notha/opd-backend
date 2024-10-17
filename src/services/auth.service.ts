@@ -2,12 +2,13 @@ import bcrypt from 'bcrypt';
 
 import { createUser, getUserByEmail } from '../db';
 import { CreateUserDto, LoginDto } from '../types';
+import ApiStatus from '../handlers/api.handler';
 
 class AuthService {
 	static async createUser(user: CreateUserDto) {
 		const candidate = await getUserByEmail(user.email);
 
-		if (candidate) throw new Error('User already exists');
+		if (candidate) throw ApiStatus.badRequest('Пользователь уже существует');
 
 		const hashedPassword = await bcrypt.hash(user.password, 5);
 
@@ -32,14 +33,14 @@ class AuthService {
 	static async login(user: LoginDto) {
 		const candidate = await getUserByEmail(user.email);
 
-		if (!candidate) throw new Error('Email or password are incorrect');
+		if (!candidate) throw ApiStatus.badRequest('Email или пароль неверны');
 
 		const passwordMatch = await bcrypt.compare(
 			user.password,
 			candidate.password
 		);
 
-		if (!passwordMatch) throw new Error('Email or password are incorrect');
+		if (!passwordMatch) throw ApiStatus.badRequest('Email или пароль неверны');
 
 		return {
 			id: candidate.id,

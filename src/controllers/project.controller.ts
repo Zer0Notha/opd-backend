@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import ApiStatus from '../handlers/api.handler';
 import { ProjectService } from '../services/project.service';
 import {
@@ -13,23 +13,21 @@ import path from 'path';
 import { ProjectStatus, ProjectType } from '@prisma/client';
 
 export class ProjectController {
-	static async getUserProjects(req: Request, res: Response) {
+	static async getUserProjects(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('User not found');
-
+			throw Error("boba")
 			const projects = await ProjectService.getUserProjects(id);
 
 			return res.status(200).json({
 				projects,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
-	static async getProjects(req: Request, res: Response) {
+	static async getProjects(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { status, type } = req.query as {
 				status: ProjectStatus | 'null';
@@ -53,13 +51,11 @@ export class ProjectController {
 				projects,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
-	static async getProject(req: Request, res: Response) {
+	static async getProject(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
@@ -70,13 +66,11 @@ export class ProjectController {
 				...project,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
-	static async getProjectPoster(req: Request, res: Response) {
+	static async getProjectPoster(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
@@ -86,14 +80,12 @@ export class ProjectController {
 			return res
 				.status(200)
 				.sendFile(path.join(__dirname, '../../files/' + project.poster));
-		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
-		}
+			} catch (e) {
+				return next(e);
+			}
 	}
 
-	static async getReportFile(req: Request, res: Response) {
+	static async getReportFile(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Report not found');
@@ -102,13 +94,11 @@ export class ProjectController {
 
 			return res.status(200).json({ ...reportFile });
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
-	static async getProjectUsers(req: Request, res: Response) {
+	static async getProjectUsers(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
@@ -117,15 +107,14 @@ export class ProjectController {
 
 			return res.status(200).json({ users });
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
 	static async createProject(
 		req: Request<never, never, Omit<CreateProject, 'status' | 'managerId'>>,
-		res: Response
+		res: Response, 
+		next: NextFunction
 	) {
 		try {
 			//@ts-ignore
@@ -172,9 +161,7 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
@@ -184,7 +171,8 @@ export class ProjectController {
 			never,
 			Omit<CreateProjectReport, 'projectId' | 'authorId' | 'attachedFile'>
 		>,
-		res: Response
+		res: Response, 
+		next: NextFunction
 	) {
 		try {
 			//@ts-ignore
@@ -230,15 +218,14 @@ export class ProjectController {
 				report,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
 	static async updateProject(
 		req: Request<never, never, Omit<UpdateProject, 'id' | 'status'>>,
-		res: Response
+		res: Response, 
+		next: NextFunction
 	) {
 		try {
 			//@ts-ignore
@@ -268,13 +255,11 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
-	static async approveProject(req: Request, res: Response) {
+	static async approveProject(req: Request, res: Response, next: NextFunction) {
 		try {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
@@ -297,13 +282,11 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 
-	static async rejectProject(req: Request, res: Response) {
+	static async rejectProject(req: Request, res: Response, next: NextFunction) {
 		try {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
@@ -326,9 +309,7 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			return next(e);
 		}
 	}
 }
