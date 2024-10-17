@@ -17,7 +17,6 @@ export class ProjectController {
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('User not found');
-			throw Error("boba")
 			const projects = await ProjectService.getUserProjects(id);
 
 			return res.status(200).json({
