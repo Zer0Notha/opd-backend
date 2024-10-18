@@ -47,9 +47,10 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 	if (err instanceof ApiStatus) {
 		return res.status(err.status).json({ error: err });
 	}
-
-	// Для всех остальных ошибок возвращаем 500
-	return res.status(500).json({ error: 'Internal server error' });
+	if(err){
+		// Для всех остальных ошибок возвращаем 500
+		return res.status(500).json({ error: err.message });
+	}
 });
 
 
