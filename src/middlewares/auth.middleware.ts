@@ -38,7 +38,7 @@ export async function authMiddleware(
 					}
 				}
 
-				return next(ApiStatus.UnauthorizedError());
+				return res.status(401).json({ error: 'Unauthorized' });
 			}
 
 			if (accessVerified) {
@@ -49,9 +49,9 @@ export async function authMiddleware(
 			return next();
 		}
 
-		next(ApiStatus.UnauthorizedError());
+		return res.status(401).json({ error: 'Unauthorized' });
 	} catch (e) {
 		console.log(e);
-		return next(ApiStatus.UnauthorizedError());
+		return res.status(401).json({ error: 'Unauthorized' });
 	}
 }
