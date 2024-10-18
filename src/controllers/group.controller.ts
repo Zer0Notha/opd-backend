@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { GroupService } from '../services/group.service';
 
 export class GroupController {
-	static async getGroups(req: Request, res: Response) {
+	static async getGroups(req: Request, res: Response, next: NextFunction) {
 		try {
 			const groups = await GroupService.getGroups();
 
@@ -10,9 +10,7 @@ export class GroupController {
 				groups,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			next(e);
 		}
 	}
 }

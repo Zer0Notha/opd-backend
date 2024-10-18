@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import AuthService from '../services/auth.service';
 import { CreateUserDto, LoginDto } from '../types';
 import TokenService from '../services/token.sevice';
@@ -6,7 +6,8 @@ import TokenService from '../services/token.sevice';
 class AuthController {
 	static async register(
 		req: Request<never, never, CreateUserDto>,
-		res: Response
+		res: Response,
+		next: NextFunction
 	) {
 		try {
 			const payload = req.body;
@@ -24,13 +25,15 @@ class AuthController {
 				...user,
 			});
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			next(e);
 		}
 	}
 
-	static async login(req: Request<never, never, LoginDto>, res: Response) {
+	static async login(
+		req: Request<never, never, LoginDto>,
+		res: Response,
+		next: NextFunction
+	) {
 		try {
 			const payload = req.body;
 
@@ -43,20 +46,16 @@ class AuthController {
 			res.cookie('token', cookie, { maxAge: 6000000, httpOnly: true });
 			return res.status(200).json({ ...user });
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			next(e);
 		}
 	}
 
-	static async logout(req: Request, res: Response) {
+	static async logout(req: Request, res: Response, next: NextFunction) {
 		try {
 			res.clearCookie('token');
 			return res.status(200).json('User Logged out');
 		} catch (e) {
-			return res.status(500).json({
-				message: (e as Error).message,
-			});
+			next(e);
 		}
 	}
 }

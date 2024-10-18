@@ -18,6 +18,11 @@ router.get(
 	authMiddleware,
 	ProjectController.getReportFile
 );
+router.get(
+	'/download/:id',
+	authMiddleware,
+	ProjectController.downloadReportFile
+);
 
 router.post('/create', authMiddleware, ProjectController.createProject);
 router.post(

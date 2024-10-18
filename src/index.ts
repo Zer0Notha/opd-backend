@@ -10,6 +10,8 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
+const ORIGIN = process.env.ORIGIN || 'http://localhost:5173';
+
 const app = express();
 
 app.use(express.json());
@@ -19,7 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
 	cors({
 		credentials: true,
-		origin: 'http://localhost:5173',
+		origin: ORIGIN,
 	})
 );
 app.use(fileUpload({ createParentPath: true }));
