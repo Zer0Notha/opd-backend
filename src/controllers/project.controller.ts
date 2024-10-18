@@ -239,7 +239,8 @@ export class ProjectController {
 
 			if (
 				user.id !== candidate.managerId ||
-				!allowedRoles.includes(user.role)
+				!allowedRoles.includes(user.role) ||
+				user.role != 'admin'
 			) {
 				throw ApiStatus.forbidden('Forbidden');
 			}
