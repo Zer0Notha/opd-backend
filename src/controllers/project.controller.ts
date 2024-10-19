@@ -18,7 +18,7 @@ export class ProjectController {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('User not found');
 			const projects = await ProjectService.getUserProjects(id);
-
+			
 			return res.status(200).json({
 				projects,
 			});
@@ -28,6 +28,9 @@ export class ProjectController {
 	}
 	static async getProjects(req: Request, res: Response, next: NextFunction) {
 		try {
+			//@ts-ignore
+			const user = req.user as GenerateTokenProps;
+
 			const { status, type } = req.query as {
 				status: ProjectStatus | 'null';
 				type: ProjectType | 'null';
@@ -44,7 +47,12 @@ export class ProjectController {
 
 			if (type !== 'null') args.type = type;
 
+			if(user.role == 'student'){
+				args.status = ProjectStatus.opened;
+			}
+
 			const projects = await ProjectService.getProjects(args);
+			
 
 			return res.status(200).json({
 				projects,
