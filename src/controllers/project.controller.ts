@@ -47,13 +47,18 @@ export class ProjectController {
 
 			if (type !== 'null') args.type = type;
 
+			let projects = await ProjectService.getProjects(args);
+
 			if(user.role == 'student'){
-				args.status = ProjectStatus.opened;
+				const excludedStatuses: ProjectStatus[] = [
+					ProjectStatus.not_confirmed,
+					ProjectStatus.rejected,
+				];
+				projects = projects.filter(
+					(project) => !excludedStatuses.includes(project.status)
+				);
 			}
-
-			const projects = await ProjectService.getProjects(args);
 			
-
 			return res.status(200).json({
 				projects,
 			});
