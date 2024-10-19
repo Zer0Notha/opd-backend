@@ -236,11 +236,10 @@ export class ProjectController {
 
 			const candidate = await ProjectService.getProject(id);
 			const allowedRoles = ['mentor', 'teacher', 'admin'];
-
 			if (
+				user.role !== 'admin' &&
 				user.id !== candidate.managerId ||
-				!allowedRoles.includes(user.role) ||
-				user.role !== 'admin'
+				!allowedRoles.includes(user.role)
 			) {
 				throw ApiStatus.forbidden('Forbidden');
 			}
