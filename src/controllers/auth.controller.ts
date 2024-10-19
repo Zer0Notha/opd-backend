@@ -46,16 +46,19 @@ class AuthController {
 			res.cookie('token', cookie, { maxAge: 6000000, httpOnly: true });
 			return res.status(200).json({ ...user });
 		} catch (e) {
-			next(e);
+			return next(e);
 		}
 	}
+
 
 	static async logout(req: Request, res: Response, next: NextFunction) {
 		try {
 			res.clearCookie('token');
 			return res.status(200).json('User Logged out');
 		} catch (e) {
+
 			next(e);
+
 		}
 	}
 }

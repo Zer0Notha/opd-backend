@@ -1,10 +1,11 @@
 class ApiStatus extends Error {
-	private status;
+	public status;
 
 	constructor(status: number, message: string) {
 		super();
 		this.status = status;
 		this.message = message;
+		Object.setPrototypeOf(this, ApiStatus.prototype);
 	}
 
 	//Ошибки клиента

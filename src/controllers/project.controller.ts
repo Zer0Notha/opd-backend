@@ -13,6 +13,7 @@ import path from 'path';
 import { ProjectStatus, ProjectType } from '@prisma/client';
 
 export class ProjectController {
+
 	static async getUserProjects(
 		req: Request,
 		res: Response,
@@ -21,18 +22,21 @@ export class ProjectController {
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('User not found');
-
 			const projects = await ProjectService.getUserProjects(id);
-
+			
 			return res.status(200).json({
 				projects,
 			});
 		} catch (e) {
+
 			next(e);
 		}
 	}
 	static async getProjects(req: Request, res: Response, next: NextFunction) {
 		try {
+			//@ts-ignore
+			const user = req.user as GenerateTokenProps;
+
 			const { status, type } = req.query as {
 				status: ProjectStatus | 'null';
 				type: ProjectType | 'null';
@@ -49,13 +53,25 @@ export class ProjectController {
 
 			if (type !== 'null') args.type = type;
 
-			const projects = await ProjectService.getProjects(args);
+			let projects = await ProjectService.getProjects(args);
 
+			if(user.role == 'student'){
+				const excludedStatuses: ProjectStatus[] = [
+					ProjectStatus.not_confirmed,
+					ProjectStatus.rejected,
+				];
+				projects = projects.filter(
+					(project) => !excludedStatuses.includes(project.status)
+				);
+			}
+			
 			return res.status(200).json({
 				projects,
 			});
 		} catch (e) {
+
 			next(e);
+
 		}
 	}
 
@@ -70,15 +86,18 @@ export class ProjectController {
 				...project,
 			});
 		} catch (e) {
+
 			next(e);
 		}
 	}
+
 
 	static async getProjectPoster(
 		req: Request,
 		res: Response,
 		next: NextFunction
 	) {
+
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
@@ -88,9 +107,11 @@ export class ProjectController {
 			return res
 				.status(200)
 				.sendFile(path.join(__dirname, '../../files/' + project.poster));
-		} catch (e) {
-			next(e);
-		}
+
+			} catch (e) {
+				next(e);
+			}
+
 	}
 
 	static async getReportFile(req: Request, res: Response, next: NextFunction) {
@@ -102,7 +123,8 @@ export class ProjectController {
 
 			return res.status(200).json({ ...reportFile });
 		} catch (e) {
-			next(e);
+
+			return next(e);
 		}
 	}
 
@@ -116,7 +138,7 @@ export class ProjectController {
 			if (!id) throw ApiStatus.badRequest('Report not found');
 
 			const reportFile = await ProjectService.getReportFile(id);
-			console.log(reportFile);
+			
 
 			if (!reportFile) throw ApiStatus.noContent('Report not found');
 
@@ -131,6 +153,7 @@ export class ProjectController {
 		res: Response,
 		next: NextFunction
 	) {
+
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
@@ -139,6 +162,7 @@ export class ProjectController {
 
 			return res.status(200).json({ users });
 		} catch (e) {
+
 			next(e);
 		}
 	}
@@ -193,7 +217,9 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
+
 			next(e);
+
 		}
 	}
 
@@ -203,7 +229,9 @@ export class ProjectController {
 			never,
 			Omit<CreateProjectReport, 'projectId' | 'authorId' | 'attachedFile'>
 		>,
+
 		res: Response,
+
 		next: NextFunction
 	) {
 		try {
@@ -269,8 +297,8 @@ export class ProjectController {
 
 			const candidate = await ProjectService.getProject(id);
 			const allowedRoles = ['mentor', 'teacher', 'admin'];
-
 			if (
+				user.role !== 'admin' &&
 				user.id !== candidate.managerId ||
 				!allowedRoles.includes(user.role)
 			) {
@@ -314,7 +342,9 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
+
 			next(e);
+
 		}
 	}
 

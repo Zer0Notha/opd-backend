@@ -6,7 +6,7 @@ export class GroupService {
 		const candidate = await getGroups();
 
 		if (!candidate) {
-			throw ApiStatus.badRequest('Groups not found');
+			throw ApiStatus.badRequest('Группы не найдены');
 		}
 
 		return candidate;

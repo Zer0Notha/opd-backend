@@ -19,7 +19,7 @@ export class UserController {
 				...userInfo,
 			});
 		} catch (e) {
-			next();
+			next(e);
 		}
 	}
 
@@ -34,7 +34,9 @@ export class UserController {
 				...userInfo,
 			});
 		} catch (e) {
+
 			next(e);
+
 		}
 	}
 }

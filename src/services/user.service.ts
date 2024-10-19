@@ -7,7 +7,7 @@ class UserService {
 		const candidate = await getUserById(id);
 
 		if (!candidate) {
-			throw ApiStatus.badRequest('User not found');
+			throw ApiStatus.badRequest('Пользователь не найден');
 		}
 
 		return {

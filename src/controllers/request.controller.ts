@@ -5,6 +5,7 @@ import { ProjectService } from '../services/project.service';
 import ApiStatus from '../handlers/api.handler';
 
 export class RequestController {
+
 	static async getUserRequests(
 		req: Request,
 		res: Response,
@@ -23,11 +24,13 @@ export class RequestController {
 		}
 	}
 
+
 	static async getProjectRequests(
 		req: Request,
 		res: Response,
 		next: NextFunction
 	) {
+
 		try {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
@@ -50,7 +53,9 @@ export class RequestController {
 				requests,
 			});
 		} catch (e) {
+
 			next(e);
+
 		}
 	}
 
@@ -75,7 +80,9 @@ export class RequestController {
 				...requests,
 			});
 		} catch (e) {
+
 			next(e);
+
 		}
 	}
 
@@ -123,6 +130,7 @@ export class RequestController {
 			});
 		} catch (e) {
 			next(e);
+
 		}
 	}
 
