@@ -13,6 +13,8 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
+const ORIGIN = process.env.ORIGIN || 'http://localhost:5173';
+
 const app = express();
 
 app.use(express.json());

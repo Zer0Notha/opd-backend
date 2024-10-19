@@ -5,7 +5,12 @@ import { ProjectService } from '../services/project.service';
 import ApiStatus from '../handlers/api.handler';
 
 export class RequestController {
-	static async getUserRequests(req: Request, res: Response, next: NextFunction) {
+
+	static async getUserRequests(
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) {
 		try {
 			const { id } = req.params;
 
@@ -15,11 +20,17 @@ export class RequestController {
 				...requests,
 			});
 		} catch (e) {
-			return next(e);
+			next(e);
 		}
 	}
 
-	static async getProjectRequests(req: Request, res: Response, next: NextFunction) {
+
+	static async getProjectRequests(
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) {
+
 		try {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
@@ -42,7 +53,9 @@ export class RequestController {
 				requests,
 			});
 		} catch (e) {
-			return next(e);
+
+			next(e);
+
 		}
 	}
 
@@ -67,13 +80,15 @@ export class RequestController {
 				...requests,
 			});
 		} catch (e) {
-			return next(e);
+
+			next(e);
+
 		}
 	}
 
 	static async createRequest(
 		req: Request<never, never, Pick<CreateProjectRequest, 'priority'>>,
-		res: Response, 
+		res: Response,
 		next: NextFunction
 	) {
 		try {
@@ -100,7 +115,7 @@ export class RequestController {
 				...requests,
 			});
 		} catch (e) {
-			return next(e);
+			next(e);
 		}
 	}
 
@@ -114,7 +129,8 @@ export class RequestController {
 				...request,
 			});
 		} catch (e) {
-			return next(e);
+			next(e);
+
 		}
 	}
 
@@ -148,7 +164,7 @@ export class RequestController {
 				...request,
 			});
 		} catch (e) {
-			return next(e);
+			next(e);
 		}
 	}
 }

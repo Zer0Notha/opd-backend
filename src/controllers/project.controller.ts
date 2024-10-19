@@ -13,7 +13,12 @@ import path from 'path';
 import { ProjectStatus, ProjectType } from '@prisma/client';
 
 export class ProjectController {
-	static async getUserProjects(req: Request, res: Response, next: NextFunction) {
+
+	static async getUserProjects(
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) {
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('User not found');
@@ -23,7 +28,8 @@ export class ProjectController {
 				projects,
 			});
 		} catch (e) {
-			return next(e);
+
+			next(e);
 		}
 	}
 	static async getProjects(req: Request, res: Response, next: NextFunction) {
@@ -63,7 +69,9 @@ export class ProjectController {
 				projects,
 			});
 		} catch (e) {
-			return next(e);
+
+			next(e);
+
 		}
 	}
 
@@ -78,11 +86,18 @@ export class ProjectController {
 				...project,
 			});
 		} catch (e) {
-			return next(e);
+
+			next(e);
 		}
 	}
 
-	static async getProjectPoster(req: Request, res: Response, next: NextFunction) {
+
+	static async getProjectPoster(
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) {
+
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
@@ -92,9 +107,11 @@ export class ProjectController {
 			return res
 				.status(200)
 				.sendFile(path.join(__dirname, '../../files/' + project.poster));
+
 			} catch (e) {
-				return next(e);
+				next(e);
 			}
+
 	}
 
 	static async getReportFile(req: Request, res: Response, next: NextFunction) {
@@ -106,11 +123,37 @@ export class ProjectController {
 
 			return res.status(200).json({ ...reportFile });
 		} catch (e) {
+
 			return next(e);
 		}
 	}
 
-	static async getProjectUsers(req: Request, res: Response, next: NextFunction) {
+	static async downloadReportFile(
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) {
+		try {
+			const { id } = req.params;
+			if (!id) throw ApiStatus.badRequest('Report not found');
+
+			const reportFile = await ProjectService.getReportFile(id);
+			
+
+			if (!reportFile) throw ApiStatus.noContent('Report not found');
+
+			return res.download(reportFile.path);
+		} catch (e) {
+			next(e);
+		}
+	}
+
+	static async getProjectUsers(
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) {
+
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
@@ -119,13 +162,14 @@ export class ProjectController {
 
 			return res.status(200).json({ users });
 		} catch (e) {
-			return next(e);
+
+			next(e);
 		}
 	}
 
 	static async createProject(
 		req: Request<never, never, Omit<CreateProject, 'status' | 'managerId'>>,
-		res: Response, 
+		res: Response,
 		next: NextFunction
 	) {
 		try {
@@ -173,7 +217,9 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-			return next(e);
+
+			next(e);
+
 		}
 	}
 
@@ -183,7 +229,9 @@ export class ProjectController {
 			never,
 			Omit<CreateProjectReport, 'projectId' | 'authorId' | 'attachedFile'>
 		>,
-		res: Response, 
+
+		res: Response,
+
 		next: NextFunction
 	) {
 		try {
@@ -230,13 +278,13 @@ export class ProjectController {
 				report,
 			});
 		} catch (e) {
-			return next(e);
+			next(e);
 		}
 	}
 
 	static async updateProject(
 		req: Request<never, never, Omit<UpdateProject, 'id' | 'status'>>,
-		res: Response, 
+		res: Response,
 		next: NextFunction
 	) {
 		try {
@@ -267,7 +315,7 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-			return next(e);
+			next(e);
 		}
 	}
 
@@ -294,7 +342,9 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-			return next(e);
+
+			next(e);
+
 		}
 	}
 
@@ -321,7 +371,7 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-			return next(e);
+			next(e);
 		}
 	}
 }

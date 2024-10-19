@@ -6,7 +6,7 @@ import TokenService from '../services/token.sevice';
 class AuthController {
 	static async register(
 		req: Request<never, never, CreateUserDto>,
-		res: Response, 
+		res: Response,
 		next: NextFunction
 	) {
 		try {
@@ -25,7 +25,7 @@ class AuthController {
 				...user,
 			});
 		} catch (e) {
-			return next(e);
+			next(e);
 		}
 	}
 
@@ -50,16 +50,15 @@ class AuthController {
 		}
 	}
 
-	static async logout(
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) {
+
+	static async logout(req: Request, res: Response, next: NextFunction) {
 		try {
 			res.clearCookie('token');
 			return res.status(200).json('User Logged out');
 		} catch (e) {
-			return next(e);
+
+			next(e);
+
 		}
 	}
 }

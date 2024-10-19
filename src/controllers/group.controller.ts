@@ -10,7 +10,9 @@ export class GroupController {
 				groups,
 			});
 		} catch (e) {
-			return next(e);
+
+			next(e);
+
 		}
 	}
 }

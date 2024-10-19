@@ -2,7 +2,10 @@ FROM node:latest
 
 WORKDIR /backend
 
+COPY . ./backend
+
 COPY package*.json ./
+COPY tsconfig*.json ./
 COPY ./src ./src
 COPY ./prisma ./prisma
 
@@ -17,6 +20,6 @@ RUN npm install -g ts-node
 
 RUN npm install -g @types/node
 
-COPY . .
 
-CMD ["npm", "run", "postinstall"]
+
+CMD ["npm", "run", "dev"]
