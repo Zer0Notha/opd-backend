@@ -59,3 +59,6 @@ export const getProjectUsers = async (projectId: string) =>
 			projectId,
 		},
 	});
+
+export const deleteProject = async (projectId: string) =>
+	prisma.project.delete({ where: { id: projectId } });

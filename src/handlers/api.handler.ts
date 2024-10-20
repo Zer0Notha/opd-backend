@@ -25,6 +25,10 @@ class ApiStatus extends Error {
 		return new ApiStatus(403, message);
 	}
 
+	static unprocessebleEntity(message: string) {
+		return new ApiStatus(422, message);
+	}
+
 	static pageNotFound(message: string) {
 		return new ApiStatus(404, message);
 	}

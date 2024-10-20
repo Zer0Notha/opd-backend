@@ -13,7 +13,6 @@ import path from 'path';
 import { ProjectStatus, ProjectType } from '@prisma/client';
 
 export class ProjectController {
-
 	static async getUserProjects(
 		req: Request,
 		res: Response,
@@ -23,12 +22,11 @@ export class ProjectController {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('User not found');
 			const projects = await ProjectService.getUserProjects(id);
-			
+
 			return res.status(200).json({
 				projects,
 			});
 		} catch (e) {
-
 			next(e);
 		}
 	}
@@ -55,7 +53,7 @@ export class ProjectController {
 
 			let projects = await ProjectService.getProjects(args);
 
-			if(user.role == 'student'){
+			if (user.role == 'student') {
 				const excludedStatuses: ProjectStatus[] = [
 					ProjectStatus.not_confirmed,
 					ProjectStatus.rejected,
@@ -64,14 +62,12 @@ export class ProjectController {
 					(project) => !excludedStatuses.includes(project.status)
 				);
 			}
-			
+
 			return res.status(200).json({
 				projects,
 			});
 		} catch (e) {
-
 			next(e);
-
 		}
 	}
 
@@ -86,18 +82,15 @@ export class ProjectController {
 				...project,
 			});
 		} catch (e) {
-
 			next(e);
 		}
 	}
-
 
 	static async getProjectPoster(
 		req: Request,
 		res: Response,
 		next: NextFunction
 	) {
-
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
@@ -107,11 +100,9 @@ export class ProjectController {
 			return res
 				.status(200)
 				.sendFile(path.join(__dirname, '../../files/' + project.poster));
-
-			} catch (e) {
-				next(e);
-			}
-
+		} catch (e) {
+			next(e);
+		}
 	}
 
 	static async getReportFile(req: Request, res: Response, next: NextFunction) {
@@ -123,7 +114,6 @@ export class ProjectController {
 
 			return res.status(200).json({ ...reportFile });
 		} catch (e) {
-
 			return next(e);
 		}
 	}
@@ -138,7 +128,6 @@ export class ProjectController {
 			if (!id) throw ApiStatus.badRequest('Report not found');
 
 			const reportFile = await ProjectService.getReportFile(id);
-			
 
 			if (!reportFile) throw ApiStatus.noContent('Report not found');
 
@@ -153,7 +142,6 @@ export class ProjectController {
 		res: Response,
 		next: NextFunction
 	) {
-
 		try {
 			const { id } = req.params;
 			if (!id) throw ApiStatus.badRequest('Project not found');
@@ -162,7 +150,6 @@ export class ProjectController {
 
 			return res.status(200).json({ users });
 		} catch (e) {
-
 			next(e);
 		}
 	}
@@ -179,6 +166,8 @@ export class ProjectController {
 
 			const allowedRoles = ['mentor', 'teacher', 'admin', 'student'];
 
+			const allowedExtentions = ['.png', '.jpg', '.jpeg'];
+
 			if (!allowedRoles.includes(user.role)) {
 				throw ApiStatus.forbidden('Forbidden');
 			}
@@ -189,12 +178,18 @@ export class ProjectController {
 
 			const file = req.files.file as UploadedFile;
 
+			const extensionName = path.extname(file.name);
+
+			if (!allowedExtentions.includes(extensionName)) {
+				throw ApiStatus.unprocessebleEntity('Неверный формат изображения');
+			}
+
 			const fileName =
 				v4({}) + '.' + file.name.split('.')[file.name.split('.').length - 1];
 
-			const path = __dirname + '../../../files/' + fileName;
+			const pathName = __dirname + '../../../files/' + fileName;
 
-			file.mv(path, (err) => {
+			file.mv(pathName, (err) => {
 				if (err) throw ApiStatus.badRequest('Error on file upload');
 			});
 
@@ -217,9 +212,7 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-
 			next(e);
-
 		}
 	}
 
@@ -243,21 +236,30 @@ export class ProjectController {
 
 			const users = await ProjectService.getProjectUsers(id);
 
+			const allowedExtentions = ['.pdf', '.doc', '.docx', '.pptx'];
+
 			if (!users.includes(user.id)) {
 				throw ApiStatus.forbidden('Forbidden');
 			}
 
 			const file = req.files?.file as UploadedFile;
+
+			const extensionName = path.extname(file.name);
+
+			if (!allowedExtentions.includes(extensionName)) {
+				throw ApiStatus.unprocessebleEntity('Неверный формат файла');
+			}
+
 			let fileName = '';
-			let path = '';
+			let pathName = '';
 
 			if (file) {
 				fileName =
 					v4({}) + '.' + file.name.split('.')[file.name.split('.').length - 1];
 
-				path = __dirname + '../../../files/' + fileName;
+				pathName = __dirname + '../../../files/' + fileName;
 
-				file.mv(path, (err) => {
+				file.mv(pathName, (err) => {
 					if (err) throw ApiStatus.badRequest('Error on file upload');
 				});
 			}
@@ -270,7 +272,7 @@ export class ProjectController {
 
 			await ProjectService.createReportFile({
 				name: fileName,
-				path,
+				path: pathName,
 				reportId: report.id,
 			});
 
@@ -298,8 +300,7 @@ export class ProjectController {
 			const candidate = await ProjectService.getProject(id);
 			const allowedRoles = ['mentor', 'teacher', 'admin'];
 			if (
-				user.role !== 'admin' &&
-				user.id !== candidate.managerId ||
+				(user.role !== 'admin' && user.id !== candidate.managerId) ||
 				!allowedRoles.includes(user.role)
 			) {
 				throw ApiStatus.forbidden('Forbidden');
@@ -342,9 +343,7 @@ export class ProjectController {
 				project,
 			});
 		} catch (e) {
-
 			next(e);
-
 		}
 	}
 
@@ -370,6 +369,28 @@ export class ProjectController {
 			return res.status(200).json({
 				project,
 			});
+		} catch (e) {
+			next(e);
+		}
+	}
+
+	static async deleteProject(req: Request, res: Response, next: NextFunction) {
+		try {
+			//@ts-ignore
+			const user = req.user as GenerateTokenProps;
+
+			const allowedRoles = ['admin'];
+
+			if (!allowedRoles.includes(user.role)) {
+				throw ApiStatus.forbidden('Вам запрещено это делать');
+			}
+
+			const { id } = req.params;
+			if (!id) throw ApiStatus.badRequest('Проект не найден');
+
+			await ProjectService.deleteProject(id);
+
+			return res.status(200);
 		} catch (e) {
 			next(e);
 		}

@@ -5,7 +5,6 @@ import { ProjectService } from '../services/project.service';
 import ApiStatus from '../handlers/api.handler';
 
 export class RequestController {
-
 	static async getUserRequests(
 		req: Request,
 		res: Response,
@@ -24,13 +23,11 @@ export class RequestController {
 		}
 	}
 
-
 	static async getProjectRequests(
 		req: Request,
 		res: Response,
 		next: NextFunction
 	) {
-
 		try {
 			//@ts-ignore
 			const user = req.user as GenerateTokenProps;
@@ -40,11 +37,11 @@ export class RequestController {
 			const project = await ProjectService.getProject(id);
 
 			if (!project) {
-				throw ApiStatus.pageNotFound('Project not found');
+				throw ApiStatus.pageNotFound('Проект не найден');
 			}
 
 			if (project.managerId !== user.id) {
-				throw ApiStatus.forbidden('Forbidden');
+				throw ApiStatus.forbidden('Вы не можете получить список заявок');
 			}
 
 			const requests = await RequestSerice.getProjectRequests(id);
@@ -53,9 +50,7 @@ export class RequestController {
 				requests,
 			});
 		} catch (e) {
-
 			next(e);
-
 		}
 	}
 
@@ -80,9 +75,7 @@ export class RequestController {
 				...requests,
 			});
 		} catch (e) {
-
 			next(e);
-
 		}
 	}
 
@@ -130,7 +123,6 @@ export class RequestController {
 			});
 		} catch (e) {
 			next(e);
-
 		}
 	}
 
@@ -145,18 +137,29 @@ export class RequestController {
 
 			const request = await RequestSerice.getRequest(id);
 
-			if (!request) throw ApiStatus.badRequest('Request not found');
+			if (!request) throw ApiStatus.badRequest('Запрос не найден');
+
+			const userRequests = await RequestSerice.getUserRequests(request.userId);
+
+			const isMemberOfProject = userRequests?.requests.filter(
+				(item) => item.status !== 'confirmed'
+			).length;
+
+			if (isMemberOfProject)
+				throw ApiStatus.badRequest('Пользователь уже состоит в другом проекте');
 
 			const project = await ProjectService.getProject(request.projectId);
 
-			if (!project) throw ApiStatus.badRequest('Project not found');
+			if (!project) throw ApiStatus.badRequest('Проект не найден');
 
 			const totalTeammates = (
 				await ProjectService.getProjectUsers(request.projectId)
 			).length;
 
 			if (totalTeammates + 1 > project.maxUserNum)
-				throw ApiStatus.badRequest('Limit reached');
+				throw ApiStatus.badRequest(
+					'Достигнуто максимальное количество участников'
+				);
 
 			await ProjectService.addTeamMember(request.userId, request.projectId);
 

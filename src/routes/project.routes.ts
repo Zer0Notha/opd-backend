@@ -34,4 +34,6 @@ router.post('/update/:id', authMiddleware, ProjectController.updateProject);
 router.post('/approve/:id', authMiddleware, ProjectController.approveProject);
 router.post('/reject/:id', authMiddleware, ProjectController.rejectProject);
 
+router.delete('/:id', authMiddleware, ProjectController.deleteProject);
+
 export default router;

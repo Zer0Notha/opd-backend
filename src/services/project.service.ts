@@ -4,6 +4,7 @@ import {
 	createProject,
 	createProjectReport,
 	createReportFile,
+	deleteProject,
 	getProjectById,
 	getProjects,
 	getProjectUsers,
@@ -57,6 +58,10 @@ export class ProjectService {
 		const candidate = await createProject(payload);
 
 		return candidate;
+	}
+
+	static async deleteProject(id: string) {
+		await deleteProject(id);
 	}
 
 	static async createProjectReport(payload: CreateProjectReport) {
