@@ -19,7 +19,7 @@ model User {
   secondName         String
   patronymic         String           @default("")
   email              String           @unique @db.Citext
-  vk                 String           @unique
+  vk                 String           
   password           String
   groupId            String           @db.Uuid
   group              Group            @relation(fields: [groupId], references: [id])
