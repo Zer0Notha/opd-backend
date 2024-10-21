@@ -5,6 +5,7 @@ import {
 	findRequest,
 	findUserRequest,
 	getProjectRequests,
+	updateAnotherUsersRequests,
 	updateRequestsPriority,
 	updateRequestStatus,
 } from '../db/request';
@@ -63,6 +64,12 @@ export class RequestSerice {
 
 	static async updateRequest(id: string, status: ProjectRequestStatus) {
 		const candidate = await updateRequestStatus(id, status);
+
+		return candidate;
+	}
+
+	static async updateAnotherUsersRequests(userId: string) {
+		const candidate = await updateAnotherUsersRequests(userId);
 
 		return candidate;
 	}
