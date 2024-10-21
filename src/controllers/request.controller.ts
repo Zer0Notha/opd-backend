@@ -96,8 +96,12 @@ export class RequestController {
 				throw ApiStatus.badRequest('Превышен лимит заявок на проекты');
 			}
 
-			const hasAnotherApprovedRequests =
-				createdRequests?.requests[0].hasAnotherApprovedRequests;
+			let hasAnotherApprovedRequests = false;
+
+			if (createdRequests?.requests) {
+				hasAnotherApprovedRequests =
+					createdRequests.requests[0]?.hasAnotherApprovedRequests ?? false;
+			}
 
 			const requests = await RequestSerice.createRequest({
 				userId: user.id,
@@ -105,7 +109,7 @@ export class RequestController {
 					(createdRequests?.requests && createdRequests?.requests.length + 1) ??
 					1,
 				projectId: projectId,
-				hasAnotherApprovedRequests: hasAnotherApprovedRequests ?? false,
+				hasAnotherApprovedRequests: hasAnotherApprovedRequests,
 			});
 
 			return res.status(200).json({
