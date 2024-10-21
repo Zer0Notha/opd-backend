@@ -20,7 +20,7 @@ export class ProjectController {
 	) {
 		try {
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('User not found');
+			if (!id) throw ApiStatus.pageNotFound('Пользователь не найден');
 			const projects = await ProjectService.getUserProjects(id);
 
 			return res.status(200).json({
@@ -74,7 +74,7 @@ export class ProjectController {
 	static async getProject(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('Project not found');
+			if (!id) throw ApiStatus.pageNotFound('Проект не найден');
 
 			const project = await ProjectService.getProject(id);
 
@@ -93,7 +93,7 @@ export class ProjectController {
 	) {
 		try {
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('Project not found');
+			if (!id) throw ApiStatus.pageNotFound('Проект не найден');
 
 			const project = await ProjectService.getProject(id);
 
@@ -108,7 +108,7 @@ export class ProjectController {
 	static async getReportFile(req: Request, res: Response, next: NextFunction) {
 		try {
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('Report not found');
+			if (!id) throw ApiStatus.pageNotFound('Отчёт не найден');
 
 			const reportFile = await ProjectService.getReportFile(id);
 
@@ -125,7 +125,7 @@ export class ProjectController {
 	) {
 		try {
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('Report not found');
+			if (!id) throw ApiStatus.pageNotFound('Проект не найден');
 
 			const reportFile = await ProjectService.getReportFile(id);
 
@@ -144,7 +144,7 @@ export class ProjectController {
 	) {
 		try {
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('Project not found');
+			if (!id) throw ApiStatus.pageNotFound('Проект не найден');
 
 			const users = await ProjectService.getProjectUsers(id);
 
@@ -295,7 +295,7 @@ export class ProjectController {
 			const projectDto = req.body;
 
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('Project not found');
+			if (!id) throw ApiStatus.pageNotFound('Проект не найден');
 
 			const candidate = await ProjectService.getProject(id);
 			const allowedRoles = ['mentor', 'teacher', 'admin'];
@@ -332,7 +332,7 @@ export class ProjectController {
 			}
 
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('Project not found');
+			if (!id) throw ApiStatus.pageNotFound('Проект не найден');
 
 			const project = await ProjectService.updateProject({
 				status: 'opened',
@@ -359,7 +359,7 @@ export class ProjectController {
 			}
 
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('Project not found');
+			if (!id) throw ApiStatus.pageNotFound('Проект не найден');
 
 			const project = await ProjectService.updateProject({
 				status: 'rejected',
@@ -386,11 +386,11 @@ export class ProjectController {
 			}
 
 			const { id } = req.params;
-			if (!id) throw ApiStatus.badRequest('Проект не найден');
+			if (!id) throw ApiStatus.pageNotFound('Проект не найден');
 
 			await ProjectService.deleteProject(id);
 
-			return res.status(200);
+			return res.status(200).json({ message: 'Проект успешно удалён' });
 		} catch (e) {
 			next(e);
 		}

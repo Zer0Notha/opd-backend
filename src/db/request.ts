@@ -42,6 +42,12 @@ export const updateRequestStatus = async (
 	status: ProjectRequestStatus
 ) => prisma.projectRequest.update({ where: { id }, data: { status } });
 
+export const updateAnotherUsersRequests = async (userId: string) =>
+	prisma.projectRequest.updateMany({
+		where: { userId: userId },
+		data: { hasAnotherApprovedRequests: true },
+	});
+
 export const getProjectRequests = async (projectId: string) =>
 	prisma.projectRequest.findMany({
 		where: {

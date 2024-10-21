@@ -48,6 +48,7 @@ export const getUserRequests = async (id: string) =>
 					projectId: true,
 					status: true,
 					project: true,
+					hasAnotherApprovedRequests: true,
 				},
 			},
 		},

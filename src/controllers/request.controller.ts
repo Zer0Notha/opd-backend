@@ -93,8 +93,11 @@ export class RequestController {
 			const createdRequests = await RequestSerice.getUserRequests(user.id);
 
 			if (createdRequests?.requests && createdRequests.requests.length >= 5) {
-				throw ApiStatus.badRequest('Limit');
+				throw ApiStatus.badRequest('Превышен лимит заявок на проекты');
 			}
+
+			const hasAnotherApprovedRequests =
+				createdRequests?.requests[0].hasAnotherApprovedRequests;
 
 			const requests = await RequestSerice.createRequest({
 				userId: user.id,
@@ -102,6 +105,7 @@ export class RequestController {
 					(createdRequests?.requests && createdRequests?.requests.length + 1) ??
 					1,
 				projectId: projectId,
+				hasAnotherApprovedRequests: hasAnotherApprovedRequests ?? false,
 			});
 
 			return res.status(200).json({
@@ -139,13 +143,7 @@ export class RequestController {
 
 			if (!request) throw ApiStatus.badRequest('Запрос не найден');
 
-			const userRequests = await RequestSerice.getUserRequests(request.userId);
-
-			const isMemberOfProject = userRequests?.requests.filter(
-				(item) => item.status !== 'confirmed'
-			).length;
-
-			if (isMemberOfProject)
+			if (request.hasAnotherApprovedRequests)
 				throw ApiStatus.badRequest('Пользователь уже состоит в другом проекте');
 
 			const project = await ProjectService.getProject(request.projectId);
@@ -162,6 +160,8 @@ export class RequestController {
 				);
 
 			await ProjectService.addTeamMember(request.userId, request.projectId);
+
+			await RequestSerice.updateAnotherUsersRequests(request.userId);
 
 			return res.status(200).json({
 				...request,

@@ -10,7 +10,7 @@ import {
 export const getProjectById = async (id: string) =>
 	prisma.project.findFirstOrThrow({
 		where: { id: id },
-		include: { reports: true },
+		include: { reports: true, team: true },
 	});
 
 export const createProject = async (data: CreateProject) =>

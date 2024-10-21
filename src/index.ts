@@ -13,7 +13,7 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
-const ORIGIN = process.env.ORIGIN || 'http://localhost:5173';
+const ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
 	cors({
 		credentials: true,
-		origin: process.env.CORS_ORIGIN,
+		origin: ORIGIN,
 	})
 );
 app.use(fileUpload({ createParentPath: true }));
@@ -49,14 +49,12 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 	if (err instanceof ApiStatus) {
 		return res.status(err.status).json({ error: err });
 	}
-	if(err){
+	if (err) {
 		// Для всех остальных ошибок возвращаем 500
 		return res.status(500).json({ error: err.message });
 	}
 });
 
-
 app.listen(PORT, () => {
 	console.log(`App has been started on port ${PORT}`);
 });
-
