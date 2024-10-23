@@ -19,6 +19,7 @@ import {
 	CreateReportFile,
 	UpdateProject,
 } from '../types';
+import { RequestSerice } from './request.service';
 
 export class ProjectService {
 	static async getUserProjects(id: string) {
@@ -61,7 +62,22 @@ export class ProjectService {
 	}
 
 	static async deleteProject(id: string) {
+		const project = await getProjectById(id);
+
 		await deleteProject(id);
+
+		project.team.map(async (user) => {
+			const requests = await RequestSerice.getUserRequests(user.userId);
+
+			await RequestSerice.setPriority(
+				requests?.requests.map((item, index) => ({
+					id: item.id,
+					priority: index + 1,
+				})) ?? []
+			);
+
+			await RequestSerice.updateAnotherUsersRequests(user.userId, false);
+		});
 	}
 
 	static async createProjectReport(payload: CreateProjectReport) {

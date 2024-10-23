@@ -68,8 +68,14 @@ export class RequestSerice {
 		return candidate;
 	}
 
-	static async updateAnotherUsersRequests(userId: string) {
-		const candidate = await updateAnotherUsersRequests(userId);
+	static async updateAnotherUsersRequests(
+		userId: string,
+		hasAnotherApprovedRequests: boolean = true
+	) {
+		const candidate = await updateAnotherUsersRequests(
+			userId,
+			hasAnotherApprovedRequests
+		);
 
 		return candidate;
 	}
