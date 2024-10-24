@@ -143,8 +143,6 @@ export class RequestController {
 
 			const { id } = req.params;
 
-			await RequestSerice.updateRequest(id, 'confirmed');
-
 			const request = await RequestSerice.getRequest(id);
 
 			if (!request) throw ApiStatus.badRequest('Запрос не найден');
@@ -180,6 +178,7 @@ export class RequestController {
 					'Команда может состоять только из одного курса обучения'
 				);
 
+			await RequestSerice.updateRequest(id, 'confirmed');
 			await ProjectService.addTeamMember(request.userId, request.projectId);
 
 			await RequestSerice.updateAnotherUsersRequests(request.userId);
