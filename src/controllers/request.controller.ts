@@ -3,6 +3,8 @@ import { RequestSerice } from '../services/request.service';
 import { CreateProjectRequest, GenerateTokenProps } from '../types';
 import { ProjectService } from '../services/project.service';
 import ApiStatus from '../handlers/api.handler';
+import { GroupService } from '../services/group.service';
+import UserService from '../services/user.service';
 
 export class RequestController {
 	static async getUserRequests(
@@ -151,16 +153,31 @@ export class RequestController {
 				throw ApiStatus.badRequest('Пользователь уже состоит в другом проекте');
 
 			const project = await ProjectService.getProject(request.projectId);
+			const requestUserGroup = await UserService.getUserInfo(request.userId);
 
 			if (!project) throw ApiStatus.badRequest('Проект не найден');
 
-			const totalTeammates = (
-				await ProjectService.getProjectUsers(request.projectId)
-			).length;
+			if (project.managerId !== user.id)
+				throw ApiStatus.forbidden('Вы не можете этого сделать');
 
-			if (totalTeammates + 1 > project.maxUserNum)
+			if (project.team.length + 1 > project.maxUserNum)
 				throw ApiStatus.badRequest(
 					'Достигнуто максимальное количество участников'
+				);
+
+			if (project.teamYear === '') {
+				await ProjectService.updateProject({
+					id: project.id,
+					teamYear: requestUserGroup.group.enteringYear,
+				});
+			}
+
+			if (
+				project.teamYear !== '' &&
+				project.teamYear !== requestUserGroup.group.enteringYear
+			)
+				throw ApiStatus.badRequest(
+					'Команда может состоять только из одного курса обучения'
 				);
 
 			await ProjectService.addTeamMember(request.userId, request.projectId);

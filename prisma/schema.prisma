@@ -45,6 +45,7 @@ model Project {
   problem      String
   wayOfSolving String
   status       ProjectStatus
+  teamYear     String           @default("")
   managerId    String           @db.Uuid
   manager      User             @relation(name: "ManagerOfProject", fields: [managerId], references: [id], onDelete: Cascade)
   mentors      User[]           @relation(name: "MentorsOfProject")

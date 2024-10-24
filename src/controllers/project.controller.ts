@@ -129,7 +129,7 @@ export class ProjectController {
 
 			const reportFile = await ProjectService.getReportFile(id);
 
-			if (!reportFile) throw ApiStatus.noContent('Report not found');
+			if (!reportFile) throw ApiStatus.noContent('Отчет не найден');
 
 			return res.download(reportFile.path);
 		} catch (e) {
@@ -169,11 +169,11 @@ export class ProjectController {
 			const allowedExtentions = ['.png', '.jpg', '.jpeg'];
 
 			if (!allowedRoles.includes(user.role)) {
-				throw ApiStatus.forbidden('Forbidden');
+				throw ApiStatus.forbidden('Вам запрещено это делать');
 			}
 
 			if (!req.files) {
-				throw ApiStatus.badRequest('No poster file provided');
+				throw ApiStatus.badRequest('Пожалуйста, загрузите файл постера');
 			}
 
 			const file = req.files.file as UploadedFile;
@@ -190,7 +190,7 @@ export class ProjectController {
 			const pathName = __dirname + '../../../files/' + fileName;
 
 			file.mv(pathName, (err) => {
-				if (err) throw ApiStatus.badRequest('Error on file upload');
+				if (err) throw ApiStatus.badRequest('Ошибка при загрузке файла');
 			});
 
 			const status =
@@ -260,7 +260,7 @@ export class ProjectController {
 				pathName = __dirname + '../../../files/' + fileName;
 
 				file.mv(pathName, (err) => {
-					if (err) throw ApiStatus.badRequest('Error on file upload');
+					if (err) throw ApiStatus.badRequest('Ошибка при загрузке файла');
 				});
 			}
 

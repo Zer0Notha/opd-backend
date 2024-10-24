@@ -25,4 +25,6 @@ export interface CreateReportFile {
 	path: string;
 }
 
-export type UpdateProject = { id: string } & Partial<CreateProject>;
+export type UpdateProject = { id: string } & Partial<
+	CreateProject & { teamYear: string }
+>;
